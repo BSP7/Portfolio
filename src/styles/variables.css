@@ -1,0 +1,36 @@
+:root {
+  --bg: #020202;
+  --bg2: #0a0f1a;
+  --bg3: #111827;
+  --bg-card: rgba(13, 21, 38, 0.8);
+  --bg-card-hover: rgba(13, 21, 38, 0.95);
+  --bg-card-solid: rgba(13, 21, 38, 0.9);
+  
+  --accent: #FBBF24;
+  --accent2: #F59E0B;
+  --glow: #FEF9C3;
+  
+  --accent-red: #EF4444;
+  --accent-emerald: #10B981;
+  --accent-blue: #3B82F6;
+  --accent-orange: #F97316;
+  --accent-purple: #8B5CF6;
+  --accent-cyan: #06B6D4;
+  --accent-pink: #EC4899;
+  --accent-amber: #FBBF24;
+  
+  --text: #FFFFFF;
+  --text2: #D1D5DB;
+  --text3: #9CA3AF;
+  
+  --card: #0d1526;
+  --border: rgba(251, 191, 36, 0.2);
+  --border-hover: rgba(251, 191, 36, 0.4);
+  --border-light: rgba(251, 191, 36, 0.1);
+  --border-light2: rgba(251, 191, 36, 0.12);
+  --border-light3: rgba(251, 191, 36, 0.15);
+  
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
