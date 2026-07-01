@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, Suspense, lazy } from "react";
+import { useState, useEffect, useCallback, Suspense, lazy } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { MatrixRain } from "./components/MatrixRain";
 import { Cursor } from "./components/Cursor";

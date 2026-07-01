@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useCounter } from "../hooks/useCounter";
 
 export function StatBadge({ label, value, visible }) {

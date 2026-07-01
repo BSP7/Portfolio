@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Cursor() {
   const [pos, setPos] = useState({ x: -100, y: -100 });
@@ -28,8 +28,8 @@ export function Cursor() {
 
   return (
     <>
-      <div className="hide-on-mobile" style={{ position: "fixed", left: pos.x - 4, top: pos.y - 4, width: 8, height: 8, background: "var(--accent)", borderRadius: "50%", pointerEvents: "none", zIndex: 9999, transition: "transform 0.1s" }} />
-      <div className="hide-on-mobile" style={{ position: "fixed", left: trail.x - 16, top: trail.y - 16, width: 32, height: 32, border: "1px solid var(--border-hover)", borderRadius: "50%", pointerEvents: "none", zIndex: 9998, transition: "left 0.05s,top 0.05s" }} />
+      <div className="hide-on-mobile" style={{ position: "fixed", left: 0, top: 0, transform: `translate3d(${pos.x - 4}px, ${pos.y - 4}px, 0)`, width: 8, height: 8, background: "var(--accent)", borderRadius: "50%", pointerEvents: "none", zIndex: 9999, willChange: "transform" }} />
+      <div className="hide-on-mobile" style={{ position: "fixed", left: 0, top: 0, transform: `translate3d(${trail.x - 16}px, ${trail.y - 16}px, 0)`, width: 32, height: 32, border: "1px solid var(--border-hover)", borderRadius: "50%", pointerEvents: "none", zIndex: 9998, willChange: "transform" }} />
     </>
   );
 }

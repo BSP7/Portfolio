@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { DATA } from "../data/portfolioData";
 import { useIntersection } from "../hooks/useIntersection";
 import { SectionHeader } from "./SectionHeader";
