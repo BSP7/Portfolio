@@ -1,29 +1,92 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Command, Menu, X, Shield } from "lucide-react";
+import { DATA } from "../data/portfolioData";
 
-export function Navbar({ active }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const links = ["About", "Skills", "Projects", "Certs", "Hackathons", "Timeline", "Contact"];
+const NAV_LINKS = [
+  { label: "About", href: "#about" },
+  { label: "Skills", href: "#skills" },
+  { label: "Projects", href: "#projects" },
+  { label: "Hackathons", href: "#hackathons" },
+  { label: "Certifications", href: "#certs" },
+  { label: "Timeline", href: "#timeline" },
+  { label: "Contact", href: "#contact" },
+];
+
+export function Navbar({ activeSection, onOpenCmd }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(2,2,2,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid var(--border-light3)", fontFamily: "var(--font-mono)" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <a href="#hero" aria-label="Home" style={{ fontFamily: "var(--font-display)", fontSize: 18, color: "var(--accent)", textDecoration: "none", animation: "flicker 6s infinite" }}>
-          {"<PAVAN/>"}
+    <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
+      <div className="nav-container">
+        {/* Logo */}
+        <a href="#hero" className="nav-logo" aria-label="Pavan Kumar Home">
+          <Shield size={18} color="var(--accent)" />
+          <span>PAVAN<span className="nav-logo-accent">.DEV</span></span>
         </a>
-        <button className="mobile-menu-btn" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
-          <span className={`hamburger-line ${isOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${isOpen ? "open" : ""}`}></span>
-          <span className={`hamburger-line ${isOpen ? "open" : ""}`}></span>
-        </button>
-        <div className={`nav-links ${isOpen ? "open" : ""}`}>
-          {links.map(l => (
-            <a key={l} href={`#${l.toLowerCase()}`} aria-label={l} onClick={() => setIsOpen(false)} style={{ color: active === l.toLowerCase() ? "var(--accent)" : "var(--text3)", textDecoration: "none", fontSize: 11, padding: "6px 10px", border: active === l.toLowerCase() ? "1px solid var(--border-hover)" : "1px solid transparent", borderRadius: 3, transition: "all 0.2s", letterSpacing: 1 }}
-              onMouseEnter={e => { if (active !== l.toLowerCase()) e.target.style.color = "var(--text2)"; }}
-              onMouseLeave={e => { if (active !== l.toLowerCase()) e.target.style.color = "var(--text3)"; }}>
-              {l.toUpperCase()}
+
+        {/* Desktop Links */}
+        <nav className="nav-links-desktop" aria-label="Main Navigation">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={`nav-link ${activeSection === link.href.substring(1) ? "active" : ""}`}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Right Actions */}
+        <div className="nav-actions">
+          {/* Quick Cmd+K Button */}
+          <button
+            onClick={onOpenCmd}
+            className="nav-cmd-btn"
+            title="Open Command Palette (⌘K)"
+            aria-label="Open Command Palette"
+          >
+            <Command size={14} />
+            <span>Search</span>
+            <kbd className="nav-cmd-kbd">⌘K</kbd>
+          </button>
+
+          {/* Mobile Menu Button - Hidden on Desktop (>=860px) */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="btn btn-secondary btn-sm nav-mobile-toggle"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="nav-mobile-drawer">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`nav-link ${activeSection === link.href.substring(1) ? "active" : ""}`}
+              style={{ padding: "10px 12px", fontSize: "0.9375rem" }}
+            >
+              {link.label}
             </a>
           ))}
         </div>
-      </div>
-    </nav>
+      )}
+    </header>
   );
 }

@@ -1,0 +1,483 @@
+/* ════════════════════════════════════════════════════════
+   LOADING SCREEN — Fingerprint Authentication Sequence
+   ════════════════════════════════════════════════════════ */
+
+/* ── Root Container ── */
+.ls-root {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000000;
+  overflow: hidden;
+}
+
+/* ── Exit transition ── */
+.ls-exit {
+  animation: lsExit 0.8s var(--ease-out-expo) forwards;
+}
+@keyframes lsExit {
+  0%   { opacity: 1; transform: scale(1) translateZ(0); }
+  40%  { opacity: 0.8; transform: scale(1.02) translateZ(0); }
+  100% { opacity: 0; transform: scale(1.05) translateZ(0); filter: brightness(3); }
+}
+
+/* ── Background ── */
+.ls-bg {
+  position: absolute;
+  inset: 0;
+  animation: fadeIn 0.5s ease both;
+}
+.ls-bg-exit {
+  animation: fadeIn 0.5s ease both, lsBgExit 0.6s ease forwards 0.2s;
+}
+@keyframes lsBgExit {
+  to { opacity: 0; }
+}
+
+/* ── Grid background ── */
+.ls-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridMove 20s linear infinite;
+}
+
+/* ── Vignette ── */
+.ls-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ── Content column ── */
+.ls-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  z-index: 1;
+  padding: var(--space-8);
+  width: 100%;
+  max-width: 480px;
+}
+
+/* ── Visibility helper ── */
+.ls-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* ── Dimmed state for exit ── */
+.ls-dimmed {
+  opacity: 0.3 !important;
+}
+
+/* ═══════════════════════════════════════
+   FINGERPRINT SCANNER
+   ═══════════════════════════════════════ */
+.ls-fp-wrap {
+  position: relative;
+  width: 140px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+
+/* Fingerprint SVG */
+.ls-fp-svg {
+  width: 90px;
+  height: 110px;
+  position: relative;
+  z-index: 2;
+}
+.ls-fp-svg path {
+  stroke: rgba(0, 245, 255, 0.15);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  transition: stroke 0.3s;
+}
+
+/* Scanning state — fingerprint glows */
+.ls-scanning .ls-fp-svg path {
+  stroke: rgba(0, 245, 255, 0.4);
+}
+
+/* Success state — fingerprint turns green */
+.ls-fp-success .ls-fp-svg path {
+  stroke: rgba(0, 255, 136, 0.6);
+}
+
+/* ── Corner brackets ── */
+.ls-fp-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  z-index: 1;
+}
+.ls-fp-corner svg {
+  width: 100%;
+  height: 100%;
+}
+.ls-fp-corner.tl { top: 0; left: 0; }
+.ls-fp-corner.tr { top: 0; right: 0; }
+.ls-fp-corner.bl { bottom: 0; left: 0; }
+.ls-fp-corner.br { bottom: 0; right: 0; }
+
+/* ── Scan beam ── */
+.ls-scan-beam {
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0, 245, 255, 0.4),
+    rgba(0, 245, 255, 0.8),
+    rgba(0, 245, 255, 0.4),
+    transparent
+  );
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.5),
+              0 0 30px rgba(0, 245, 255, 0.2);
+  z-index: 3;
+  opacity: 0;
+}
+.ls-scanning .ls-scan-beam {
+  opacity: 1;
+  animation: fingerprintScan 2s linear infinite;
+}
+.ls-fp-success .ls-scan-beam {
+  opacity: 0;
+}
+
+/* ── Pulse rings around fingerprint ── */
+.ls-fp-pulse {
+  position: absolute;
+  inset: -20px;
+  border: 1px solid rgba(0, 245, 255, 0.15);
+  border-radius: 50%;
+  animation: lsFpPulse 2.5s ease-out infinite;
+}
+.ls-fp-pulse:nth-child(2) {
+  animation-delay: 0.8s;
+}
+@keyframes lsFpPulse {
+  0%   { transform: scale(0.8) translateZ(0); opacity: 0.5; }
+  100% { transform: scale(1.5) translateZ(0); opacity: 0; }
+}
+
+.ls-fp-success .ls-fp-pulse {
+  border-color: rgba(0, 255, 136, 0.2);
+}
+
+/* ═══════════════════════════════════════
+   HEADER — "BIOMETRIC VERIFICATION"
+   ═══════════════════════════════════════ */
+.ls-header {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+}
+.ls-header-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(0, 245, 255, 0.5);
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+.ls-header-title {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 4vw, 24px);
+  color: var(--text);
+  letter-spacing: 2px;
+  position: relative;
+}
+.ls-header-glitch {
+  animation: glitchText 8s steps(1) infinite;
+}
+.ls-header-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-top: var(--space-3);
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════
+   TERMINAL LOG LINES
+   ═══════════════════════════════════════ */
+.ls-terminal {
+  width: 100%;
+  max-height: 180px;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+}
+
+.ls-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ls-log-item {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text4);
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+  padding-left: var(--space-2);
+}
+
+.ls-log-active {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+  padding-left: var(--space-2);
+}
+
+.ls-cursor {
+  display: inline-block;
+  animation: cursorBlink 0.85s step-end infinite;
+  color: var(--accent);
+  margin-left: 2px;
+}
+
+/* ═══════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════ */
+.ls-progress-wrap {
+  width: 100%;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+}
+
+.ls-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text4);
+  text-transform: uppercase;
+}
+
+.ls-progress-pct {
+  color: var(--text3);
+  font-variant-numeric: tabular-nums;
+}
+.ls-glow {
+  color: var(--accent);
+  text-shadow: 0 0 8px rgba(0,245,255,0.5);
+}
+
+.ls-progress-track {
+  height: 2px;
+  background: rgba(0, 245, 255, 0.08);
+  border-radius: 1px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ls-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+  border-radius: 1px;
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-out-expo);
+  box-shadow: 0 0 8px rgba(0,245,255,0.4),
+              0 0 16px rgba(0,245,255,0.2);
+  position: relative;
+}
+
+/* ═══════════════════════════════════════
+   SUCCESS STATE
+   ═══════════════════════════════════════ */
+.ls-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6) 0;
+  animation: fadeUp 0.5s var(--ease-out-expo) both;
+}
+
+.ls-success-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: var(--success);
+  text-shadow: 0 0 12px rgba(0,255,136,0.4);
+}
+
+.ls-success-glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(0,255,136,0.12) 0%,
+    transparent 70%
+  );
+  animation: lsSuccessGlow 1.5s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes lsSuccessGlow {
+  0%   { transform: scale(0.5) translateZ(0); opacity: 0; }
+  50%  { opacity: 1; }
+  100% { transform: scale(1.5) translateZ(0); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════
+   BRANDING
+   ═══════════════════════════════════════ */
+.ls-brand {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+}
+
+.ls-brand-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--text);
+  margin-bottom: var(--space-1);
+}
+
+.ls-brand-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text4);
+}
+
+/* ═══════════════════════════════════════
+   CRT FLASH OVERLAY (exit transition)
+   ═══════════════════════════════════════ */
+.ls-crt-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: rgba(0, 245, 255, 0.15);
+  opacity: 0;
+}
+.ls-crt-flash.active {
+  animation: lsCrtFlash 0.4s ease-out forwards;
+}
+@keyframes lsCrtFlash {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  30%  { opacity: 0.1; }
+  45%  { opacity: 0.7; }
+  60%  { opacity: 0.05; }
+  80%  { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+/* ── Loading screen ring animations — updated to cyan ── */
+.ls-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+.ls-ring-inner {
+  width: 120px;
+  height: 120px;
+  border-color: rgba(0, 245, 255, 0.1);
+}
+.ls-ring-cw {
+  width: 148px;
+  height: 148px;
+  border-top-color: rgba(0, 245, 255, 0.3);
+  border-right-color: rgba(108, 99, 255, 0.2);
+  animation: spin 4s linear infinite;
+}
+.ls-ring-ccw {
+  width: 168px;
+  height: 168px;
+  border-bottom-color: rgba(255, 0, 255, 0.2);
+  border-left-color: rgba(0, 245, 255, 0.1);
+  animation: spinReverse 6s linear infinite;
+}
+
+/* ── Core content (center ring text) — hidden in new fingerprint design ── */
+.ls-core-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 170px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+  display: none; /* Hidden — replaced by fingerprint */
+}
+
+.ls-core-content {
+  text-align: center;
+  z-index: 2;
+}
+.ls-core-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0,245,255,0.4);
+}
+.ls-core-status {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text4);
+  margin-top: var(--space-1);
+}
+
+/* ── Loading screen checkmark ── */
+@keyframes ls-checkmark {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 480px) {
+  .ls-content {
+    padding: var(--space-6);
+    gap: var(--space-6);
+  }
+  .ls-fp-wrap {
+    width: 110px;
+    height: 130px;
+  }
+  .ls-fp-svg {
+    width: 70px;
+    height: 85px;
+  }
+  .ls-terminal {
+    max-height: 140px;
+  }
+}

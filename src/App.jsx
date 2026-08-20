@@ -1,55 +1,108 @@
-import { useState, useEffect, useCallback, Suspense, lazy } from "react";
-import { LoadingScreen } from "./components/LoadingScreen";
-import { MatrixRain } from "./components/MatrixRain";
-import { Cursor } from "./components/Cursor";
+import "./App.css";
+import { useState, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { About } from "./components/About";
 import { Skills } from "./components/Skills";
+import { Projects } from "./components/Projects";
+import { Hackathons } from "./components/Hackathons";
+import { Certifications } from "./components/Certifications";
+import { Timeline } from "./components/Timeline";
+import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
-
-const Projects = lazy(() => import("./components/Projects").then(m => ({ default: m.Projects })));
-const Certifications = lazy(() => import("./components/Certifications").then(m => ({ default: m.Certifications })));
-const Hackathons = lazy(() => import("./components/Hackathons").then(m => ({ default: m.Hackathons })));
-const Timeline = lazy(() => import("./components/Timeline").then(m => ({ default: m.Timeline })));
-const Contact = lazy(() => import("./components/Contact").then(m => ({ default: m.Contact })));
+import { CommandPalette } from "./components/CommandPalette";
+import { ToastProvider } from "./components/Toast";
+import { LoadingScreen } from "./components/LoadingScreen";
 
 export default function App() {
-  const [loading, setLoading] = useState(true);
-  const [active, setActive] = useState("hero");
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [cmdOpen, setCmdOpen] = useState(false);
 
-  const handleDone = useCallback(() => setLoading(false), []);
-
+  // Apply permanent dark theme & Solar Amber accent to html root
   useEffect(() => {
-    if (loading) return;
-    const sections = document.querySelectorAll("section[id]");
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
-    }, { threshold: 0.4 });
-    sections.forEach(s => obs.observe(s));
-    return () => obs.disconnect();
-  }, [loading]);
+    document.documentElement.setAttribute("data-theme", "dark");
+    document.documentElement.setAttribute("data-accent", "amber");
+  }, []);
 
-  if (loading) return <LoadingScreen onDone={handleDone} />;
+  // Global Cmd+K / Ctrl+K keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCmdOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Robust active section detection using getBoundingClientRect
+  useEffect(() => {
+    if (isLoading) return;
+
+    const sectionIds = ["hero", "about", "skills", "projects", "hackathons", "certs", "timeline", "contact"];
+
+    const handleScroll = () => {
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60;
+      if (isAtBottom) {
+        setActiveSection("contact");
+        return;
+      }
+
+      const headerOffset = 140;
+      let current = "hero";
+
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= headerOffset) {
+            current = id;
+          }
+        }
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isLoading]);
 
   return (
-    <div style={{ minHeight: "100vh", cursor: "none" }}>
-      <Cursor />
-      <MatrixRain />
-      <Navbar active={active} />
-      <main style={{ position: "relative", zIndex: 1 }}>
-        <Hero />
-        <About />
-        <Skills />
-        <Suspense fallback={<div style={{ padding: "100px", textAlign: "center", color: "var(--accent)", fontFamily: "var(--font-mono)" }}>Loading section...</div>}>
+    <ToastProvider>
+      <div className="app-root">
+        {/* Modern Animated Loading Screen */}
+        {isLoading && (
+          <LoadingScreen onComplete={() => setIsLoading(false)} />
+        )}
+
+        <Navbar
+          activeSection={activeSection}
+          onOpenCmd={() => setCmdOpen(true)}
+        />
+
+        <main>
+          <Hero onOpenCmd={() => setCmdOpen(true)} />
+          <About />
+          <Skills />
           <Projects />
-          <Certifications />
           <Hackathons />
+          <Certifications />
           <Timeline />
           <Contact />
-        </Suspense>
-      </main>
-      <Footer />
-    </div>
+        </main>
+
+        <Footer />
+
+        {/* Global Command Palette */}
+        <CommandPalette
+          isOpen={cmdOpen}
+          onClose={() => setCmdOpen(false)}
+        />
+      </div>
+    </ToastProvider>
   );
 }

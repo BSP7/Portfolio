@@ -1,35 +1,82 @@
-import { useRef } from "react";
+import { useState } from "react";
+import { GraduationCap, Milestone, Trophy, Calendar, Briefcase, Filter } from "lucide-react";
 import { DATA } from "../data/portfolioData";
-import { useIntersection } from "../hooks/useIntersection";
 import { SectionHeader } from "./SectionHeader";
 
+const TYPE_ICONS = {
+  Education: GraduationCap,
+  Milestone: Milestone,
+  Hackathons: Trophy,
+  work: Briefcase
+};
+
 export function Timeline() {
-  const ref = useRef(null);
-  const vis = useIntersection(ref);
-  const typeColor = { edu: "#60A5FA", work: "#34D399", milestone: "#FBBF24" };
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
+  const filterOptions = ["All", "Education", "Milestone", "Hackathons"];
+
+  const filteredTimeline = DATA.timeline.filter((item) => {
+    if (selectedFilter === "All") return true;
+    return item.category === selectedFilter;
+  });
+
   return (
-    <section id="timeline" ref={ref} style={{ padding: "100px 24px", position: "relative", zIndex: 1 }}>
-      <SectionHeader title="JOURNEY.md" subtitle="06 // CAREER PATH" />
-      <div style={{ maxWidth: 700, margin: "60px auto 0", position: "relative" }}>
-        <div style={{ position: "absolute", left: 20, top: 0, bottom: 0, width: 1, background: "linear-gradient(180deg,transparent,rgba(251,191,36,0.4),transparent)" }} />
-        {DATA.timeline.map((t, i) => (
-          <div key={t.year} className={`section-reveal ${vis ? "visible" : ""} stagger-${Math.min(i + 1, 5)}`}
-            style={{ display: "flex", gap: 32, marginBottom: 36, position: "relative" }}>
-            <div style={{ position: "relative", flexShrink: 0 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "50%", background: `${typeColor[t.type]}20`, border: `2px solid ${typeColor[t.type]}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, zIndex: 1, position: "relative" }}>
-                {t.type === "edu" ? "🎓" : t.type === "work" ? "💼" : "⚡"}
+    <section id="timeline" className="section">
+      <div className="container">
+        <SectionHeader
+          tag="Career Journey"
+          title="Timeline & Milestones"
+          description="Chronological journey through education at Garden City University, research milestones, hackathons, and projects."
+        />
+
+        {/* Filter Pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-8)" }}>
+          {filterOptions.map((opt) => (
+            <button
+              key={opt}
+              onClick={() => setSelectedFilter(opt)}
+              className={`skill-category-pill ${selectedFilter === opt ? "active" : ""}`}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+
+        {/* Timeline Path */}
+        <div className="timeline-wrapper">
+          <div className="timeline-line" />
+
+          {filteredTimeline.map((item, idx) => {
+            const Icon = TYPE_ICONS[item.category] || Milestone;
+            return (
+              <div key={idx} className="timeline-item">
+                <div className="timeline-dot" />
+                <div className="card" style={{ padding: "var(--space-5)" }}>
+                  <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-2)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Icon size={16} color="var(--accent)" />
+                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)" }}>
+                        {item.title}
+                      </h3>
+                    </div>
+                    <span className="badge" style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>
+                      <Calendar size={12} />
+                      {item.year}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: "0.8125rem", color: "var(--accent-text)", fontFamily: "var(--font-mono)", marginBottom: "var(--space-2)" }}>
+                    {item.org}
+                  </div>
+
+                  <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                    {item.desc}
+                  </p>
+                </div>
               </div>
-            </div>
-            <div style={{ paddingTop: 8, flex: 1, paddingBottom: 8, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-              <div style={{ display: "flex", gap: 12, alignItems: "center", marginBottom: 4 }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: typeColor[t.type] }}>{t.year}</span>
-                <span className="tag" style={{ background: `${typeColor[t.type]}15`, border: `1px solid ${typeColor[t.type]}40`, color: typeColor[t.type] }}>{t.type.toUpperCase()}</span>
-              </div>
-              <div style={{ fontSize: 16, color: "var(--text)", fontWeight: 600, marginBottom: 2 }}>{t.title}</div>
-              <div style={{ fontSize: 13, color: "var(--text3)" }}>{t.org}</div>
-            </div>
-          </div>
-        ))}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

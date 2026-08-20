@@ -1,60 +1,221 @@
-import { useRef } from "react";
+import { useState, useEffect } from "react";
+import { ArrowRight, Copy, Check, Terminal, Shield, Sparkles, Mail, ExternalLink } from "lucide-react";
+import { GithubIcon, LinkedinIcon } from "./Icons";
 import { DATA } from "../data/portfolioData";
-import { useIntersection } from "../hooks/useIntersection";
+import { useToast } from "./Toast";
 import { useTypewriter } from "../hooks/useTypewriter";
-import { StatBadge } from "./StatBadge";
 
-export function Hero() {
-  const typed = useTypewriter(DATA.title);
-  const ref = useRef(null);
-  const vis = useIntersection(ref);
+export function Hero({ onOpenCmd }) {
+  const typedRole = useTypewriter(DATA.title, 60, 2000);
+  const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState("telemetry");
+  const { addToast } = useToast();
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(DATA.email);
+    setCopied(true);
+    addToast("Copied " + DATA.email + " to clipboard!", "success");
+    setTimeout(() => setCopied(false), 2200);
+  };
 
   return (
-    <section id="hero" ref={ref} style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", position: "relative", padding: "120px 24px 80px", overflow: "hidden" }}>
-      {/* Hex grid bg */}
-      <div style={{ position: "absolute", inset: 0, opacity: 0.06, backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 26L15 0h30l15 26-15 26H15z' fill='none' stroke='%23FBBF24' strokeWidth='1'/%3E%3C/svg%3E\")", backgroundSize: "60px 52px" }} />
-      {/* Scanner Line */}
-      <div className="scanner-line" />
+    <section id="hero" className="hero-wrapper">
+      <div className="container">
+        <div className="hero-grid">
+          {/* Left Column: Intro & Calls to Action */}
+          <div className="animate-fade-up">
+            {/* Status Pill */}
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: "var(--space-4)" }}>
+              <span className="badge badge-success">
+                <span className="avail-dot" />
+                Open for Security & AI Roles / Research
+              </span>
+            </div>
 
-      <div style={{ maxWidth: 900, textAlign: "center", position: "relative", zIndex: 1 }}>
-        {/* Avatar */}
-        <div style={{ position: "relative", display: "inline-block", marginBottom: 32, animation: vis ? "fadeUp 0.8s ease both" : "none" }}>
-          <div style={{ width: 140, height: 140, borderRadius: "50%", border: "2px solid rgba(251,191,36,0.5)", margin: "0 auto", overflow: "hidden", position: "relative", animation: "glowPulse 3s ease infinite" }}>
-            <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg,#1a2744,#0d1526)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 10px rgba(251,191,36,0.5))" }}>
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="M12 8v4" />
-                <path d="M12 16h.01" />
-              </svg>
+            {/* Main Name & Title */}
+            <h1 className="hero-title">
+              Hi, I'm <span className="hero-gradient-text">{DATA.name}</span>
+            </h1>
+
+            {/* Typewriter role */}
+            <div
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "clamp(1.125rem, 2.5vw, 1.5rem)",
+                color: "var(--accent-text)",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: "var(--space-4)",
+                minHeight: 36
+              }}
+            >
+              <span>{typedRole}</span>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 2,
+                  height: 24,
+                  backgroundColor: "var(--accent)",
+                  animation: "blinkCursor 1s infinite"
+                }}
+              />
+            </div>
+
+            {/* Compelling Value Proposition */}
+            <p className="hero-lead">
+              Computer Science undergraduate at <strong>Garden City University</strong> specializing in 
+              AI-driven threat intelligence, cryptographic identity systems, and zero-knowledge verification.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="hero-cta-group">
+              <a href="#projects" className="btn btn-primary btn-lg">
+                <span>Explore Projects & Simulators</span>
+                <ArrowRight size={16} />
+              </a>
+
+              <button onClick={handleCopyEmail} className="btn btn-secondary btn-lg">
+                {copied ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
+                <span>{copied ? "Copied!" : "Copy Email"}</span>
+              </button>
+
+              <button onClick={onOpenCmd} className="btn btn-ghost btn-lg" title="Open Command Runner">
+                <Terminal size={16} />
+                <span>Run ⌘K</span>
+              </button>
+            </div>
+
+            {/* Social Links Row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-8)" }}>
+              <a
+                href={`https://${DATA.github}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary btn-sm"
+                aria-label="GitHub Profile"
+              >
+                <GithubIcon size={15} />
+                <span>GitHub</span>
+              </a>
+              <a
+                href={`https://${DATA.linkedin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-secondary btn-sm"
+                aria-label="LinkedIn Profile"
+              >
+                <LinkedinIcon size={15} />
+                <span>LinkedIn</span>
+              </a>
+              <a
+                href={`mailto:${DATA.email}`}
+                className="btn btn-secondary btn-sm"
+                aria-label="Send direct email"
+              >
+                <Mail size={15} />
+                <span>{DATA.email}</span>
+              </a>
+            </div>
+
+            {/* Key Stats Bar */}
+            <div className="hero-stats-row">
+              {DATA.stats.map((st) => (
+                <div key={st.label} className="stat-item">
+                  <span className="stat-value">{st.value}</span>
+                  <span className="stat-label">{st.label}</span>
+                </div>
+              ))}
             </div>
           </div>
-          <div style={{ position: "absolute", top: -4, left: -4, right: -4, bottom: -4, borderRadius: "50%", border: "1px solid rgba(251,191,36,0.2)", animation: "borderSpin 8s linear infinite" }} />
-          <div style={{ position: "absolute", bottom: 8, right: 8, width: 20, height: 20, borderRadius: "50%", background: "var(--accent-emerald)", border: "2px solid var(--bg)", animation: "pulse 2s ease infinite" }} />
-        </div>
 
-        <div style={{ animation: vis ? "fadeUp 0.8s 0.2s ease both" : "none", opacity: vis ? undefined : 0 }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--accent)", letterSpacing: 4, marginBottom: 12 }}>// IDENTITY VERIFIED</div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(36px,7vw,72px)", fontWeight: 900, color: "var(--text)", lineHeight: 1.1, marginBottom: 16 }}>{DATA.name}</h1>
-        </div>
+          {/* Right Column: Interactive Terminal Preview & Live Telemetry */}
+          <div className="animate-fade-up stagger-2">
+            <div className="terminal-window">
+              <div className="terminal-header">
+                <div className="terminal-dots">
+                  <span className="terminal-dot" style={{ background: "#ef4444" }} />
+                  <span className="terminal-dot" style={{ background: "#f59e0b" }} />
+                  <span className="terminal-dot" style={{ background: "#10b981" }} />
+                </div>
+                <div className="terminal-title">pavan@threat-mesh: ~/workspace</div>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <button
+                    onClick={() => setActiveTab("telemetry")}
+                    className={`btn btn-sm ${activeTab === "telemetry" ? "btn-outline" : "btn-ghost"}`}
+                    style={{ padding: "2px 8px", fontSize: "0.75rem" }}
+                  >
+                    Telemetry
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("spec")}
+                    className={`btn btn-sm ${activeTab === "spec" ? "btn-outline" : "btn-ghost"}`}
+                    style={{ padding: "2px 8px", fontSize: "0.75rem" }}
+                  >
+                    Profile.json
+                  </button>
+                </div>
+              </div>
 
-        <div style={{ height: 50, display: "flex", alignItems: "center", justifyContent: "center", gap: 4, marginBottom: 24, animation: vis ? "fadeUp 0.8s 0.4s ease both" : "none", opacity: vis ? undefined : 0 }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "clamp(16px,3vw,24px)", color: "var(--accent)" }}>{typed}</span>
-          <span style={{ width: 3, height: 28, background: "var(--accent)", animation: "blink 0.8s step-end infinite" }} />
-        </div>
+              <div className="terminal-body">
+                {activeTab === "telemetry" ? (
+                  <div>
+                    <div style={{ color: "var(--text-muted)", marginBottom: 8 }}>
+                      # System Architecture & Active Security Nodes
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ color: "var(--accent)" }}>AI Inference Engine:</span>
+                      <span style={{ color: "var(--success)" }}>● ACTIVE (v2.4.1)</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ color: "var(--accent)" }}>Zero-Knowledge Attestation:</span>
+                      <span style={{ color: "var(--success)" }}>● READY (zk-SNARK)</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ color: "var(--accent)" }}>Keccak256 State Root:</span>
+                      <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem" }}>0x7f9a...c4b2</span>
+                    </div>
 
-        <p style={{ color: "var(--text2)", fontSize: 18, maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7, animation: vis ? "fadeUp 0.8s 0.6s ease both" : "none", opacity: vis ? undefined : 0 }}>
-          {DATA.tagline}
-        </p>
+                    <div style={{ marginBlock: "16px 8px", borderTop: "1px solid var(--border)", paddingTop: 12 }}>
+                      <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginBottom: 4 }}>
+                        LIVE SECURITY MONITORING STREAM
+                      </div>
+                      <div style={{ background: "rgba(0,0,0,0.3)", padding: 8, borderRadius: 6, fontSize: "0.75rem" }}>
+                        <span style={{ color: "var(--success)" }}>[INFO 01:04:12]</span> Network telemetry normal. Packet latency: 12ms.
+                        <br />
+                        <span style={{ color: "var(--accent)" }}>[DEFENSE]</span> Inceptrix 2.0 & Fusion-X verified builds synced.
+                      </div>
+                    </div>
 
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", animation: vis ? "fadeUp 0.8s 0.8s ease both" : "none", opacity: vis ? undefined : 0 }}>
-          <a href="#projects" className="btn btn-primary">View Projects</a>
-          <a href="#" className="btn btn-secondary">Download Resume</a>
-          <a href="#contact" className="btn btn-secondary">Contact Me</a>
-        </div>
-
-        {/* Stats */}
-        <div style={{ display: "flex", gap: 24, justifyContent: "center", marginTop: 60, flexWrap: "wrap", animation: vis ? "fadeUp 0.8s 1s ease both" : "none", opacity: vis ? undefined : 0 }}>
-          {DATA.stats.map(s => <StatBadge key={s.label} label={s.label} value={s.value} visible={vis} />)}
+                    <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ color: "var(--accent)" }}>$</span>
+                      <span style={{ color: "var(--text-secondary)" }}>
+                        try clicking below to test live simulators 👇
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <pre style={{ margin: 0, color: "var(--accent-text)", fontSize: "0.75rem", overflowX: "auto" }}>
+{JSON.stringify(
+  {
+    developer: DATA.name,
+    specialization: "Cybersecurity & AI",
+    institution: "Garden City University",
+    year_of_study: "2023 - 2027",
+    primary_stacks: ["Python", "Solidity", "FastAPI", "Machine Learning", "EVM"],
+    certifications_count: 8,
+    hackathon_awards: "Top 20 Finalist @ Inceptrix 2.0",
+    status: "Available for internships & developer roles"
+  },
+  null,
+  2
+)}
+                  </pre>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
