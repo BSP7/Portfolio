@@ -60,9 +60,9 @@ export function Contact() {
       addToast("Message transmitted successfully!", "success");
       setFormData({ name: "", email: "", message: "", website: "" });
     } catch (err) {
-      // Mock success for static hosting preview if API endpoint is not running locally
-      setSent(true);
-      addToast("Message received! Thank you for getting in touch.", "success");
+      const errorMsg = err.message || "Failed to transmit message. Please try again later.";
+      setError(errorMsg);
+      addToast(errorMsg, "error");
     } finally {
       setIsSubmitting(false);
     }
