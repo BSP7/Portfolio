@@ -1,109 +1,92 @@
 /**
- * scrollAnimations.js - Centralised scroll-reveal engine.
+ * scrollAnimations.js - Centralized scroll-reveal engine.
  *
  * Progressive Enhancement Model:
- *   1. Adds `.js-reveal-ready` to <html> — this activates the
- *      CSS hidden states for .cyber-reveal elements.
- *   2. Creates ONE IntersectionObserver for the entire page.
- *   3. When an element intersects, adds `.is-visible` which
- *      triggers the CSS animation for that variant.
- *   4. After the animation ends, adds `.anim-done` which locks
- *      the element at opacity:1 and frees will-change memory.
- *
- * If this module fails to run, elements remain visible (default).
+ *   1. Observes all `.reveal-on-scroll` elements via IntersectionObserver.
+ *   2. When an element intersects viewport, adds `.is-revealed`.
+ *   3. Adds `.anim-done` once animation completes to free memory.
+ *   4. Watches for dynamically added DOM nodes (React component state toggles).
+ *   5. Skips animations cleanly if prefers-reduced-motion is detected.
  */
 
-const STAGGER_BASE_MS = 60;
+const STAGGER_BASE_MS = 70;
 
-const ANIM_DURATION = {
-  hud:      650,
-  scan:     650,
-  glitch:   220,
-  grid:     650,
-  pulse:    450,
-  terminal: 650,
-  fade:     650,
-};
+let observer = null;
+let mutationObserver = null;
+let initialized = false;
 
-var observer = null;
-var initialized = false;
-
-function getAnimEnd(el) {
-  var type    = el.dataset.reveal || 'fade';
-  var stagger = parseInt(el.dataset.stagger || '0', 10);
-  var delay   = stagger * STAGGER_BASE_MS;
-  var dur     = ANIM_DURATION[type] || 650;
-  return delay + dur + 100;
-}
-
-function applyStaggerDelay(el) {
-  var stagger = parseInt(el.dataset.stagger || '0', 10);
+function applyStagger(el) {
+  const stagger = parseInt(el.dataset.stagger || "0", 10);
   if (stagger > 0) {
-    el.style.setProperty('--reveal-delay', stagger * STAGGER_BASE_MS + 'ms');
+    el.style.transitionDelay = `${stagger * STAGGER_BASE_MS}ms`;
+    el.style.animationDelay = `${stagger * STAGGER_BASE_MS}ms`;
   }
 }
 
 function observeElement(el) {
   if (!observer) return;
-  if (el.classList.contains('is-visible')) return;
+  if (el.classList.contains("is-revealed")) return;
   observer.observe(el);
 }
 
 export function initRevealAnimations() {
-  if (initialized) return function() {};
+  if (typeof window === "undefined") return () => {};
+  if (initialized) return () => {};
   initialized = true;
 
-  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReduced) {
-    // Reduced motion: skip animations, everything stays visible
-    return function() {};
+    document.querySelectorAll(".reveal-on-scroll").forEach((el) => {
+      el.classList.add("is-revealed", "anim-done");
+    });
+    return () => {};
   }
 
   observer = new IntersectionObserver(
-    function(entries) {
-      entries.forEach(function(entry) {
+    (entries) => {
+      entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        var el = entry.target;
-        applyStaggerDelay(el);
-        el.classList.add('is-visible');
+        const el = entry.target;
+        applyStagger(el);
+        el.classList.add("is-revealed");
         observer.unobserve(el);
-        setTimeout(function() { el.classList.add('anim-done'); }, getAnimEnd(el));
+        setTimeout(() => {
+          el.classList.add("anim-done");
+        }, 900);
       });
     },
-    { threshold: 0.08, rootMargin: '0px 0px -2% 0px' }
+    { threshold: 0.08, rootMargin: "0px 0px -4% 0px" }
   );
 
-  // Observe current elements
-  document.querySelectorAll('.cyber-reveal').forEach(observeElement);
+  // Observe existing elements
+  document.querySelectorAll(".reveal-on-scroll").forEach(observeElement);
 
-  // IMPORTANT: Add sentinel AFTER creating observer and calling observe().
-  // The IO fires asynchronously for initially-visible elements.
-  // We add .js-reveal-ready here so CSS hides elements right as the
-  // IO is set up — timing is essentially simultaneous from user's perspective.
-  document.documentElement.classList.add('js-reveal-ready');
-
-  // Watch for lazy-loaded elements (React Suspense)
-  var mutObs = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mut) {
-      mut.addedNodes.forEach(function(node) {
+  // Watch for dynamically rendered items
+  mutationObserver = new MutationObserver((mutations) => {
+    mutations.forEach((mut) => {
+      mut.addedNodes.forEach((node) => {
         if (node.nodeType !== 1) return;
-        if (node.classList && node.classList.contains('cyber-reveal')) observeElement(node);
-        if (node.querySelectorAll) node.querySelectorAll('.cyber-reveal').forEach(observeElement);
+        if (node.classList && node.classList.contains("reveal-on-scroll")) {
+          observeElement(node);
+        }
+        if (node.querySelectorAll) {
+          node.querySelectorAll(".reveal-on-scroll").forEach(observeElement);
+        }
       });
     });
   });
-  mutObs.observe(document.body, { childList: true, subtree: true });
 
-  return function() {
-    if (observer) { observer.disconnect(); observer = null; }
-    mutObs.disconnect();
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+  return () => {
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    if (mutationObserver) {
+      mutationObserver.disconnect();
+      mutationObserver = null;
+    }
     initialized = false;
-    document.documentElement.classList.remove('js-reveal-ready');
   };
-}
-
-export function resetRevealAnimations() {
-  initialized = false;
-  if (observer) { observer.disconnect(); observer = null; }
-  document.documentElement.classList.remove('js-reveal-ready');
 }

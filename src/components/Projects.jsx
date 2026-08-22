@@ -1,18 +1,19 @@
-import { useState } from "react";
-import { ExternalLink, Terminal, Shield, Play, CheckCircle2, AlertTriangle, Lock, Cpu, Sparkles, RefreshCw, Key } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ExternalLink, Terminal, Shield, Play, CheckCircle2, AlertTriangle, Lock, Cpu, Sparkles, RefreshCw, Key, Radio, Zap } from "lucide-react";
 import { GithubIcon } from "./Icons";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
 import { useToast } from "./Toast";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 export function Projects() {
   const [selectedProject, setSelectedProject] = useState(DATA.projects[0].id);
   const [activeTab, setActiveTab] = useState("simulator"); // 'simulator' | 'overview' | 'architecture'
+  const cardSpotlight = useSpotlight();
 
   // Simulator States
   // Shadow Intent State
   const [selectedScenarioIndex, setSelectedScenarioIndex] = useState(0);
-  const [customPayload, setCustomPayload] = useState("");
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
 
@@ -38,14 +39,14 @@ export function Projects() {
       setIsScanning(false);
       setScanResult(scenario);
       addToast(`Threat analyzed: ${scenario.name} (${scenario.severity})`, scenario.severity === "Safe" ? "info" : "error");
-    }, 450);
+    }, 550);
   };
 
-  // Run Crypto Verifier
+  // Run Crypto Verifier with animated streaming hex hash
   const handleGenerateCryptoHash = () => {
     setIsVerifyingCrypto(true);
+    setHashOutput("");
     setTimeout(() => {
-      // Deterministic mock keccak256
       let hash = "0x";
       for (let i = 0; i < didInput.length; i++) {
         hash += (didInput.charCodeAt(i) * 17 % 16).toString(16);
@@ -55,7 +56,7 @@ export function Projects() {
       setCryptoVerified(true);
       setIsVerifyingCrypto(false);
       addToast("Keccak256 cryptographic identity verified on EVM state!", "success");
-    }, 400);
+    }, 500);
   };
 
   // Run ZK Prover
@@ -69,12 +70,12 @@ export function Projects() {
           statement: "Claim: Age >= 18",
           claimValid: isEligible,
           zkProofHash: "pi_a: 0x8a92...b71c | pi_b: 0x4f12...e90a | pi_c: 0x11e4...345a",
-          revealedInfo: "Zero PII leaked. Raw DOB is concealed."
+          revealedInfo: "Zero PII leaked. Raw DOB is mathematically concealed."
         },
         verified: isEligible
       });
-      addToast(isEligible ? "ZK-Proof generated & verified: Age >= 18 (True)" : "ZK-Proof Failed: Age < 18", isEligible ? "success" : "error");
-    }, 500);
+      addToast(isEligible ? "ZK-Proof generated & verified: Age >= 18 (Valid)" : "ZK-Proof Rejected: Age < 18", isEligible ? "success" : "error");
+    }, 600);
   };
 
   return (
@@ -86,8 +87,8 @@ export function Projects() {
           description="Explore real architectures, threat vectors, and live interactive simulators for AI defense, Ethereum authentication, and Zero-Knowledge proofs."
         />
 
-        {/* Project Selector Pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-6)" }}>
+        {/* Project Selector Pills with Stagger */}
+        <div className="reveal-on-scroll" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-6)" }}>
           {DATA.projects.map((proj) => {
             const isSelected = proj.id === selectedProject;
             return (
@@ -98,7 +99,12 @@ export function Projects() {
                   setScanResult(null);
                 }}
                 className={`btn ${isSelected ? "btn-primary" : "btn-secondary"}`}
-                style={{ borderRadius: "var(--radius-full)" }}
+                style={{
+                  borderRadius: "var(--radius-full)",
+                  boxShadow: isSelected ? "0 0 16px var(--accent-glow)" : "none",
+                  transform: isSelected ? "scale(1.02)" : "scale(1)",
+                  transition: "all var(--transition-fast)"
+                }}
               >
                 <Shield size={16} />
                 <span>{proj.title}</span>
@@ -107,8 +113,11 @@ export function Projects() {
           })}
         </div>
 
-        {/* Active Project Card */}
-        <div className="project-card">
+        {/* Active Project Card with 3D Spotlight */}
+        <div
+          className="project-card card-spotlight reveal-on-scroll stagger-1"
+          {...cardSpotlight}
+        >
           {/* Project Header Info */}
           <div style={{ padding: "var(--space-6) var(--space-6) var(--space-4)" }}>
             <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--space-4)", marginBottom: "var(--space-2)" }}>
@@ -152,7 +161,13 @@ export function Projects() {
             {/* Tech Stack Pills */}
             <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginTop: "var(--space-3)" }}>
               {currentProject.tech.map((t) => (
-                <span key={t} className="skill-tag-pill">
+                <span
+                  key={t}
+                  className="skill-tag-pill"
+                  style={{ transition: "transform var(--transition-fast)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                >
                   {t}
                 </span>
               ))}
@@ -181,10 +196,23 @@ export function Projects() {
           <div style={{ padding: "var(--space-6)" }}>
             {/* 1. SIMULATOR TAB */}
             {activeTab === "simulator" && (
-              <div>
+              <div className="animate-fade-in">
                 {/* A. SHADOW INTENT SIMULATOR */}
                 {currentProject.id === "shadow-intent" && (
-                  <div className="project-simulator-box">
+                  <div className="project-simulator-box" style={{ position: "relative", overflow: "hidden" }}>
+                    {/* Background Radar Line if Scanning */}
+                    {isScanning && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.15), transparent)",
+                          animation: "shimmer 1.2s infinite linear",
+                          pointerEvents: "none"
+                        }}
+                      />
+                    )}
+
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-4)" }}>
                       <div>
                         <span style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--accent-text)", fontFamily: "var(--font-mono)" }}>
@@ -194,7 +222,10 @@ export function Projects() {
                           Select an attack payload scenario to simulate real-time heuristic packet inspection:
                         </div>
                       </div>
-                      <span className="badge badge-accent">Model: Heuristic Random Forest v2.4</span>
+                      <span className="badge badge-accent">
+                        <Radio size={12} className="avail-dot" />
+                        Model: Heuristic Random Forest v2.4
+                      </span>
                     </div>
 
                     {/* Threat Scenarios Selection */}
@@ -207,29 +238,34 @@ export function Projects() {
                             handleRunThreatScan(sc);
                           }}
                           className={`btn btn-sm ${selectedScenarioIndex === idx ? "btn-primary" : "btn-secondary"}`}
+                          style={{
+                            boxShadow: selectedScenarioIndex === idx ? "0 0 10px var(--accent-glow)" : "none",
+                            transition: "all var(--transition-fast)"
+                          }}
                         >
-                          {sc.name}
+                          <Zap size={12} />
+                          <span>{sc.name}</span>
                         </button>
                       ))}
                     </div>
 
                     {/* Scan Trigger & Output */}
-                    <div style={{ background: "rgba(0,0,0,0.4)", borderRadius: "var(--radius-sm)", padding: "var(--space-4)", border: "1px solid var(--border)" }}>
+                    <div style={{ background: "rgba(0,0,0,0.45)", borderRadius: "var(--radius-sm)", padding: "var(--space-4)", border: "1px solid var(--border)" }}>
                       {isScanning ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: 12 }}>
-                          <RefreshCw size={16} className="avail-dot" />
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: 14 }}>
+                          <RefreshCw size={18} color="var(--accent)" style={{ animation: "radarSweep 1s infinite linear" }} />
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.8125rem", color: "var(--accent-text)" }}>
                             Analyzing telemetry & vector weights through ML classifier...
                           </span>
                         </div>
                       ) : scanResult ? (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                               {scanResult.severity === "Safe" ? (
-                                <CheckCircle2 size={18} color="var(--success)" />
+                                <CheckCircle2 size={20} color="var(--success)" />
                               ) : (
-                                <AlertTriangle size={18} color="var(--danger)" />
+                                <AlertTriangle size={20} color="var(--danger)" />
                               )}
                               <span style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--text)" }}>
                                 {scanResult.name}
@@ -237,20 +273,23 @@ export function Projects() {
                             </div>
                             <span
                               className={`badge ${scanResult.severity === "Safe" ? "badge-success" : "badge-warning"}`}
+                              style={{
+                                boxShadow: scanResult.severity === "Safe" ? "0 0 8px rgba(16, 185, 129, 0.3)" : "0 0 8px rgba(245, 158, 11, 0.3)"
+                              }}
                             >
                               Severity: {scanResult.severity}
                             </span>
                           </div>
 
                           <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", color: "var(--text-muted)" }}>
-                            Payload: <code style={{ color: "var(--accent-text)" }}>{scanResult.payload}</code>
+                            Payload: <code style={{ color: "var(--accent-text)", background: "rgba(0,0,0,0.3)", padding: "2px 6px", borderRadius: 4 }}>{scanResult.payload}</code>
                           </div>
 
-                          {/* Confidence Bar */}
+                          {/* Confidence Bar with Glow */}
                           <div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", fontFamily: "var(--font-mono)", marginBottom: 4 }}>
                               <span>Threat Confidence:</span>
-                              <span style={{ color: scanResult.confidence > 50 ? "var(--danger)" : "var(--success)" }}>
+                              <span style={{ color: scanResult.confidence > 50 ? "var(--danger)" : "var(--success)", fontWeight: 700 }}>
                                 {scanResult.confidence}%
                               </span>
                             </div>
@@ -259,7 +298,8 @@ export function Projects() {
                                 className="sim-meter-fill"
                                 style={{
                                   width: `${scanResult.confidence}%`,
-                                  backgroundColor: scanResult.confidence > 50 ? "var(--danger)" : "var(--success)"
+                                  backgroundColor: scanResult.confidence > 50 ? "var(--danger)" : "var(--success)",
+                                  boxShadow: scanResult.confidence > 50 ? "0 0 10px rgba(239, 68, 68, 0.5)" : "0 0 10px rgba(16, 185, 129, 0.5)"
                                 }}
                               />
                             </div>
@@ -271,7 +311,7 @@ export function Projects() {
                         </div>
                       ) : (
                         <div style={{ textAlign: "center", padding: "16px", color: "var(--text-muted)", fontSize: "0.8125rem" }}>
-                          Click any attack scenario above to run the live AI classifier!
+                          Click any attack scenario button above to run the live AI classifier!
                         </div>
                       )}
                     </div>
@@ -290,10 +330,11 @@ export function Projects() {
                       </div>
                     </div>
 
-                    <div style={{ display: "flex", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-3)", marginBottom: "var(--space-4)" }}>
                       <input
                         type="text"
                         className="form-input"
+                        style={{ flex: "1 1 220px" }}
                         value={didInput}
                         onChange={(e) => {
                           setDidInput(e.target.value);
@@ -312,14 +353,14 @@ export function Projects() {
                     </div>
 
                     {hashOutput && (
-                      <div style={{ background: "rgba(0,0,0,0.4)", padding: "var(--space-4)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
+                      <div className="animate-fade-in" style={{ background: "rgba(0,0,0,0.45)", padding: "var(--space-4)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
                         <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", marginBottom: 4, fontFamily: "var(--font-mono)" }}>
                           KECCAK-256 HASH COMMITMENT:
                         </div>
-                        <code style={{ fontSize: "0.8125rem", color: "var(--accent-text)", wordBreak: "break-all" }}>
+                        <code style={{ fontSize: "0.8125rem", color: "var(--accent-text)", wordBreak: "break-all", display: "block", padding: "6px", background: "rgba(0,0,0,0.3)", borderRadius: 4 }}>
                           {hashOutput}
                         </code>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 10, fontSize: "0.8125rem", color: "var(--success)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, fontSize: "0.8125rem", color: "var(--success)" }}>
                           <CheckCircle2 size={16} />
                           <span>Identity successfully anchored to simulated Ethereum Smart Contract State Root.</span>
                         </div>
@@ -340,7 +381,7 @@ export function Projects() {
                       </div>
                     </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-4)" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--space-4)", marginBottom: "var(--space-4)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <label style={{ fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-secondary)" }}>
                           User Age (Private Input):
@@ -348,7 +389,7 @@ export function Projects() {
                         <input
                           type="number"
                           className="form-input"
-                          style={{ width: 80, padding: "8px 12px" }}
+                          style={{ width: 84, padding: "8px 12px" }}
                           value={zkAgeInput}
                           min={10}
                           max={99}
@@ -367,16 +408,16 @@ export function Projects() {
                     </div>
 
                     {zkState.proof && (
-                      <div style={{ background: "rgba(0,0,0,0.4)", padding: "var(--space-4)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
+                      <div className="animate-fade-in" style={{ background: "rgba(0,0,0,0.45)", padding: "var(--space-4)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                           <span style={{ fontWeight: 700, fontSize: "0.875rem", color: "var(--text)" }}>
                             {zkState.proof.statement}
                           </span>
-                          <span className={`badge ${zkState.verified ? "badge-success" : "badge-warning"}`}>
-                            {zkState.verified ? "VALID PROOF" : "INVALID PROOF"}
+                          <span className={`badge ${zkState.verified ? "badge-success" : "badge-warning"}`} style={{ boxShadow: "0 0 10px var(--accent-glow)" }}>
+                            {zkState.verified ? "VALID ZK-PROOF" : "INVALID PROOF"}
                           </span>
                         </div>
-                        <div style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--accent-text)", marginBottom: 6 }}>
+                        <div style={{ fontSize: "0.75rem", fontFamily: "var(--font-mono)", color: "var(--accent-text)", marginBottom: 8, padding: 6, background: "rgba(0,0,0,0.3)", borderRadius: 4 }}>
                           {zkState.proof.zkProofHash}
                         </div>
                         <div style={{ fontSize: "0.8125rem", color: "var(--text-secondary)" }}>
@@ -391,7 +432,7 @@ export function Projects() {
 
             {/* 2. ARCHITECTURE TAB */}
             {activeTab === "architecture" && (
-              <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+              <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
                 <div style={{ background: "var(--surface)", padding: "var(--space-5)", borderRadius: "var(--radius-md)", border: "1px solid var(--border)" }}>
                   <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
                     System Architecture & Verification Model

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Search, Shield, Brain, Link2, Code2, Cloud, BarChart3, Users, CheckCircle2, Sparkles, Filter, PieChart as PieIcon, Layers, ChevronRight } from "lucide-react";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 const ICON_MAP = {
   Shield,
@@ -15,19 +16,21 @@ const ICON_MAP = {
 
 // Rich Solar Amber & Gold harmonious spectrum
 const CATEGORY_COLORS = {
-  "Security & Networking": { primary: "#f59e0b", glow: "rgba(245, 158, 11, 0.35)", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
-  "Programming": { primary: "#f97316", glow: "rgba(249, 115, 22, 0.35)", gradient: "linear-gradient(135deg, #f97316, #ea580c)" },
-  "AI / Machine Learning": { primary: "#fbbf24", glow: "rgba(251, 191, 36, 0.35)", gradient: "linear-gradient(135deg, #fbbf24, #f59e0b)" },
-  "Blockchain": { primary: "#d97706", glow: "rgba(217, 119, 6, 0.35)", gradient: "linear-gradient(135deg, #d97706, #b45309)" },
-  "Cloud & Tools": { primary: "#eab308", glow: "rgba(234, 179, 8, 0.35)", gradient: "linear-gradient(135deg, #eab308, #ca8a04)" },
-  "Data Science": { primary: "#b45309", glow: "rgba(180, 83, 9, 0.35)", gradient: "linear-gradient(135deg, #b45309, #92400e)" },
-  "Soft Skills & Professional": { primary: "#a16207", glow: "rgba(161, 98, 7, 0.35)", gradient: "linear-gradient(135deg, #a16207, #78350f)" }
+  "Security & Networking": { primary: "#f59e0b", glow: "rgba(245, 158, 11, 0.45)", gradient: "linear-gradient(135deg, #f59e0b, #d97706)" },
+  "Programming": { primary: "#f97316", glow: "rgba(249, 115, 22, 0.45)", gradient: "linear-gradient(135deg, #f97316, #ea580c)" },
+  "AI / Machine Learning": { primary: "#fbbf24", glow: "rgba(251, 191, 36, 0.45)", gradient: "linear-gradient(135deg, #fbbf24, #f59e0b)" },
+  "Blockchain": { primary: "#d97706", glow: "rgba(217, 119, 6, 0.45)", gradient: "linear-gradient(135deg, #d97706, #b45309)" },
+  "Cloud & Tools": { primary: "#eab308", glow: "rgba(234, 179, 8, 0.45)", gradient: "linear-gradient(135deg, #eab308, #ca8a04)" },
+  "Data Science": { primary: "#b45309", glow: "rgba(180, 83, 9, 0.45)", gradient: "linear-gradient(135deg, #b45309, #92400e)" },
+  "Soft Skills & Professional": { primary: "#a16207", glow: "rgba(161, 98, 7, 0.45)", gradient: "linear-gradient(135deg, #a16207, #78350f)" }
 };
 
 export function Skills() {
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const donutSpotlight = useSpotlight();
+  const listSpotlight = useSpotlight();
 
   const totalSkillsCount = useMemo(() => {
     return DATA.skills.reduce((acc, curr) => acc + curr.items.length, 0);
@@ -45,9 +48,8 @@ export function Skills() {
       const endAngle = cumulativeAngle + angleSpan - gap / 2;
       cumulativeAngle += angleSpan;
 
-      // Color scheme
       const color = CATEGORY_COLORS[cat.cat]?.primary || "#f59e0b";
-      const glow = CATEGORY_COLORS[cat.cat]?.glow || "rgba(245, 158, 11, 0.3)";
+      const glow = CATEGORY_COLORS[cat.cat]?.glow || "rgba(245, 158, 11, 0.35)";
 
       return {
         ...cat,
@@ -61,16 +63,13 @@ export function Skills() {
     });
   }, [totalSkillsCount]);
 
-  // Selected category data
   const currentCategory = slices[activeCategoryIndex] || slices[0];
   const IconComponent = ICON_MAP[currentCategory.icon] || Shield;
 
-  // Filter skills based on search query
   const displayedSkills = useMemo(() => {
     if (!searchQuery.trim()) {
       return currentCategory.items;
     }
-    // If searching, search across all categories
     return DATA.skills.flatMap((cat) =>
       cat.items
         .filter((item) => item.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -78,7 +77,6 @@ export function Skills() {
     );
   }, [searchQuery, currentCategory]);
 
-  // Helper to generate SVG Donut Arc Path
   const getArcPath = (startAngle, endAngle, innerR, outerR, cx = 160, cy = 160) => {
     const toRad = (deg) => (deg * Math.PI) / 180;
     const x1 = cx + outerR * Math.cos(toRad(startAngle));
@@ -107,19 +105,21 @@ export function Skills() {
 
         {/* Top Summary Stats Bar */}
         <div
+          className="reveal-on-scroll"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))",
             gap: "var(--space-4)",
             marginBottom: "var(--space-8)",
             padding: "var(--space-4) var(--space-6)",
             background: "var(--surface)",
             border: "1px solid var(--border)",
-            borderRadius: "var(--radius-lg)"
+            borderRadius: "var(--radius-lg)",
+            boxShadow: "var(--shadow-sm)"
           }}
         >
           <div>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
               TOTAL CAPABILITIES
             </div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)" }}>
@@ -127,7 +127,7 @@ export function Skills() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
               CORE DOMAINS
             </div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--accent-text)" }}>
@@ -135,7 +135,7 @@ export function Skills() {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+            <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
               PRIMARY FOCUS
             </div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)" }}>
@@ -148,23 +148,25 @@ export function Skills() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "var(--space-8)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
+            gap: "var(--space-6)",
             alignItems: "start"
           }}
         >
           {/* LEFT: INTERACTIVE SVG PIE / DONUT CHART */}
           <div
-            className="card"
+            className="card card-spotlight reveal-on-scroll"
+            {...donutSpotlight}
             style={{
-              padding: "var(--space-6)",
+              padding: "clamp(16px, 3vw, 24px)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              position: "relative"
+              position: "relative",
+              overflow: "hidden"
             }}
           >
-            <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-4)" }}>
+            <div style={{ width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: "var(--space-4)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.8125rem", fontFamily: "var(--font-mono)", color: "var(--accent-text)", fontWeight: 700 }}>
                 <PieIcon size={16} />
                 <span>RADIAL DOMAIN DISTRIBUTION</span>
@@ -174,9 +176,9 @@ export function Skills() {
               </span>
             </div>
 
-            {/* SVG Donut Canvas */}
-            <div style={{ position: "relative", width: 320, height: 320, margin: "0 auto" }}>
-              <svg viewBox="0 0 320 320" width="320" height="320" style={{ transform: "rotate(0deg)" }}>
+            {/* Responsive SVG Donut Canvas with Dynamic Glowing Slices */}
+            <div style={{ position: "relative", width: "100%", maxWidth: 300, aspectRatio: "1/1", margin: "0 auto" }}>
+              <svg viewBox="0 0 320 320" width="100%" height="100%" style={{ overflow: "visible" }}>
                 {slices.map((slice) => {
                   const isSelected = activeCategoryIndex === slice.index;
                   const isHovered = hoveredIndex === slice.index;
@@ -194,9 +196,13 @@ export function Skills() {
                       strokeWidth="2"
                       style={{
                         cursor: "pointer",
-                        transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                        opacity: hoveredIndex !== null && !isHovered && !isSelected ? 0.45 : 1,
-                        filter: isSelected ? `drop-shadow(0 0 12px ${slice.glow})` : "none"
+                        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                        opacity: hoveredIndex !== null && !isHovered && !isSelected ? 0.35 : 1,
+                        filter: isSelected
+                          ? `drop-shadow(0 0 14px ${slice.glow})`
+                          : isHovered
+                          ? `drop-shadow(0 0 8px ${slice.glow})`
+                          : "none"
                       }}
                       onMouseEnter={() => setHoveredIndex(slice.index)}
                       onMouseLeave={() => setHoveredIndex(null)}
@@ -209,14 +215,14 @@ export function Skills() {
                 })}
               </svg>
 
-              {/* Center Donut Hub */}
+              {/* Center Donut Hub (Fluid & Responsive) */}
               <div
                 style={{
                   position: "absolute",
                   inset: 0,
                   margin: "auto",
-                  width: 154,
-                  height: 154,
+                  width: "clamp(120px, 46%, 150px)",
+                  height: "clamp(120px, 46%, 150px)",
                   borderRadius: "50%",
                   background: "var(--surface)",
                   border: "1px solid var(--border-strong)",
@@ -225,37 +231,39 @@ export function Skills() {
                   alignItems: "center",
                   justifyContent: "center",
                   textAlign: "center",
-                  padding: 12,
-                  boxShadow: "inset 0 2px 10px rgba(0,0,0,0.5)",
-                  pointerEvents: "none"
+                  padding: 8,
+                  boxShadow: "inset 0 2px 12px rgba(0,0,0,0.6), 0 0 16px rgba(0,0,0,0.4)",
+                  pointerEvents: "none",
+                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
                 }}
               >
                 <div
                   style={{
                     color: currentCategory.color,
-                    marginBottom: 4,
-                    transition: "transform 0.2s ease"
+                    marginBottom: 2,
+                    transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+                    transform: hoveredIndex !== null ? "scale(1.15)" : "scale(1)"
                   }}
                 >
-                  <IconComponent size={22} />
+                  <IconComponent size={20} />
                 </div>
                 <div
                   style={{
-                    fontSize: "0.8125rem",
+                    fontSize: "0.75rem",
                     fontWeight: 800,
                     color: "var(--text)",
-                    lineHeight: 1.2,
-                    maxWidth: 130
+                    lineHeight: 1.15,
+                    maxWidth: 110
                   }}
                 >
                   {currentCategory.cat}
                 </div>
                 <div
                   style={{
-                    fontSize: "0.6875rem",
+                    fontSize: "0.625rem",
                     fontFamily: "var(--font-mono)",
                     color: "var(--accent-text)",
-                    marginTop: 4,
+                    marginTop: 2,
                     fontWeight: 700
                   }}
                 >
@@ -264,14 +272,14 @@ export function Skills() {
               </div>
             </div>
 
-            {/* Clickable Legend Pills */}
+            {/* Clickable Legend Pills (Fluid Grid) */}
             <div
               style={{
                 width: "100%",
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 120px), 1fr))",
                 gap: "var(--space-2)",
-                marginTop: "var(--space-6)"
+                marginTop: "var(--space-5)"
               }}
             >
               {slices.map((slice) => {
@@ -288,16 +296,19 @@ export function Skills() {
                     className="btn btn-secondary btn-sm"
                     style={{
                       justifyContent: "flex-start",
-                      padding: "6px 10px",
+                      padding: "6px 8px",
                       borderColor: isSelected ? slice.color : "var(--border)",
                       background: isSelected ? "var(--surface-active)" : "var(--surface)",
-                      fontSize: "0.75rem"
+                      fontSize: "0.6875rem",
+                      transform: isSelected ? "translateY(-1px)" : "none",
+                      boxShadow: isSelected ? `0 2px 8px ${slice.glow}` : "none",
+                      transition: "all var(--transition-fast)"
                     }}
                   >
                     <span
                       style={{
-                        width: 8,
-                        height: 8,
+                        width: 7,
+                        height: 7,
                         borderRadius: "50%",
                         backgroundColor: slice.color,
                         boxShadow: isSelected ? `0 0 6px ${slice.color}` : "none",
@@ -307,7 +318,7 @@ export function Skills() {
                     <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1, textAlign: "left" }}>
                       {slice.cat}
                     </span>
-                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)", fontSize: "0.6875rem" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", color: "var(--text-muted)", fontSize: "0.625rem" }}>
                       {slice.percentage}%
                     </span>
                   </button>
@@ -318,9 +329,10 @@ export function Skills() {
 
           {/* RIGHT: SKILL INSPECTOR & PROFICIENCY BREAKDOWN */}
           <div
-            className="card"
+            className="card card-spotlight reveal-on-scroll stagger-2"
+            {...listSpotlight}
             style={{
-              padding: "var(--space-6)",
+              padding: "clamp(16px, 3vw, 24px)",
               display: "flex",
               flexDirection: "column",
               gap: "var(--space-4)"
@@ -335,7 +347,8 @@ export function Skills() {
                       width: 10,
                       height: 10,
                       borderRadius: "50%",
-                      backgroundColor: currentCategory.color
+                      backgroundColor: currentCategory.color,
+                      boxShadow: `0 0 8px ${currentCategory.color}`
                     }}
                   />
                   <h3 style={{ fontSize: "1.125rem", fontWeight: 800, color: "var(--text)" }}>
@@ -350,7 +363,7 @@ export function Skills() {
               </div>
 
               {/* Quick Skill Search */}
-              <div style={{ position: "relative", minWidth: 200, flex: "1 1 180px" }}>
+              <div style={{ position: "relative", minWidth: 160, flex: "1 1 160px" }}>
                 <Search
                   size={14}
                   color="var(--text-muted)"
@@ -382,7 +395,7 @@ export function Skills() {
               </div>
             </div>
 
-            {/* Skill Cards List */}
+            {/* Skill Cards List with Smooth Animated Progress Meters */}
             <div
               style={{
                 display: "flex",
@@ -412,6 +425,14 @@ export function Skills() {
                         border: "1px solid var(--border)",
                         borderRadius: "var(--radius-sm)",
                         transition: "all var(--transition-fast)"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = "var(--accent-border)";
+                        e.currentTarget.style.transform = "translateX(2px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "var(--border)";
+                        e.currentTarget.style.transform = "translateX(0)";
                       }}
                     >
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -445,7 +466,7 @@ export function Skills() {
                         </div>
                       </div>
 
-                      {/* Smooth Proficiency Meter */}
+                      {/* Smooth Animated Proficiency Meter with glowing tip */}
                       <div
                         style={{
                           height: 6,
@@ -461,7 +482,8 @@ export function Skills() {
                             height: "100%",
                             borderRadius: "var(--radius-full)",
                             background: "var(--gradient-accent)",
-                            transition: "width 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
+                            boxShadow: "0 0 8px var(--accent-glow)",
+                            transition: "width 0.6s cubic-bezier(0.16, 1, 0.3, 1)"
                           }}
                         />
                       </div>

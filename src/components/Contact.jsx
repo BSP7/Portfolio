@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Mail, MapPin, Send, CheckCircle, Copy, Check, MessageSquare } from "lucide-react";
+import { Mail, MapPin, Send, CheckCircle, Copy, Check, MessageSquare, RefreshCw } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
 import { useToast } from "./Toast";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 export function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "", website: "" });
@@ -12,6 +13,8 @@ export function Contact() {
   const [error, setError] = useState(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
   const { addToast } = useToast();
+  const leftSpotlight = useSpotlight();
+  const rightSpotlight = useSpotlight();
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(DATA.email);
@@ -74,10 +77,10 @@ export function Contact() {
           description="Have a cybersecurity challenge, an AI security research initiative, or a development opportunity? Let's discuss."
         />
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "var(--space-8)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "var(--space-8)" }}>
           {/* Left Column: Direct Info & Quick Copy */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-            <div className="card" style={{ padding: "var(--space-6)" }}>
+          <div className="reveal-on-scroll" style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            <div className="card card-spotlight" {...leftSpotlight} style={{ padding: "var(--space-6)" }}>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
                 Direct Communication
               </h3>
@@ -93,6 +96,7 @@ export function Contact() {
                   padding: "var(--space-4)",
                   border: "1px solid var(--border)",
                   display: "flex",
+                  flexWrap: "wrap",
                   justifyContent: "space-between",
                   alignItems: "center",
                   gap: "var(--space-3)",
@@ -122,7 +126,15 @@ export function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="card"
-                  style={{ padding: "var(--space-3) var(--space-4)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                  style={{
+                    padding: "var(--space-3) var(--space-4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    transition: "transform var(--transition-fast), border-color var(--transition-fast)"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "translateX(3px)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "translateX(0)")}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <GithubIcon size={16} />
@@ -136,7 +148,15 @@ export function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="card"
-                  style={{ padding: "var(--space-3) var(--space-4)", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                  style={{
+                    padding: "var(--space-3) var(--space-4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    transition: "transform var(--transition-fast), border-color var(--transition-fast)"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "translateX(3px)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "translateX(0)")}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <LinkedinIcon size={16} />
@@ -157,9 +177,9 @@ export function Contact() {
           </div>
 
           {/* Right Column: Contact Message Form */}
-          <div className="card" style={{ padding: "var(--space-6)" }}>
+          <div className="card card-spotlight reveal-on-scroll stagger-2" {...rightSpotlight} style={{ padding: "var(--space-6)" }}>
             {sent ? (
-              <div style={{ textAlign: "center", padding: "var(--space-10) var(--space-4)" }}>
+              <div className="animate-scale-in" style={{ textAlign: "center", padding: "var(--space-10) var(--space-4)" }}>
                 <CheckCircle size={48} color="var(--success)" style={{ margin: "0 auto var(--space-4)" }} />
                 <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text)", marginBottom: 6 }}>
                   Message Sent Successfully
@@ -256,10 +276,19 @@ export function Contact() {
                   type="submit"
                   disabled={isSubmitting}
                   className="btn btn-primary"
-                  style={{ width: "100%", justifyContent: "center", paddingBlock: 12 }}
+                  style={{ width: "100%", justifyContent: "center", paddingBlock: 12, boxShadow: "0 0 14px var(--accent-glow)" }}
                 >
-                  <Send size={15} />
-                  <span>{isSubmitting ? "Transmitting..." : "Send Message"}</span>
+                  {isSubmitting ? (
+                    <>
+                      <RefreshCw size={15} style={{ animation: "radarSweep 1s infinite linear" }} />
+                      <span>Transmitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={15} />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}

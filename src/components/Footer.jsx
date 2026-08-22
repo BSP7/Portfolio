@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowUp, Mail, Shield, Clock, Heart } from "lucide-react";
+import { ArrowUp, Mail, Shield, Clock, Heart, Radio } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { DATA } from "../data/portfolioData";
 
@@ -33,7 +33,9 @@ export function Footer() {
         borderTop: "1px solid var(--border)",
         background: "var(--bg-secondary)",
         paddingBlock: "var(--space-12) var(--space-8)",
-        marginTop: "var(--space-16)"
+        marginTop: "var(--space-16)",
+        position: "relative",
+        zIndex: 10
       }}
     >
       <div className="container">
@@ -67,12 +69,13 @@ export function Footer() {
               alignItems: "center",
               gap: 10,
               fontSize: "0.8125rem",
-              fontFamily: "var(--font-mono)"
+              fontFamily: "var(--font-mono)",
+              boxShadow: "0 0 12px rgba(0,0,0,0.4)"
             }}
           >
-            <Clock size={15} color="var(--accent)" />
+            <span className="avail-dot" style={{ backgroundColor: "var(--accent)", boxShadow: "0 0 8px var(--accent)" }} />
             <span style={{ color: "var(--text-muted)" }}>Bengaluru, India:</span>
-            <span style={{ color: "var(--text)", fontWeight: 600 }}>{istTime || "Loading IST..."}</span>
+            <span style={{ color: "var(--accent-text)", fontWeight: 700 }}>{istTime || "Loading IST..."}</span>
           </div>
 
           {/* Socials & Back to Top */}
@@ -107,6 +110,9 @@ export function Footer() {
               className="btn btn-secondary btn-sm"
               aria-label="Scroll to top"
               title="Back to top"
+              style={{ transition: "transform var(--transition-fast)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-3px)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
             >
               <ArrowUp size={15} />
             </button>

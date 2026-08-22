@@ -2,6 +2,7 @@ import { useState } from "react";
 import { GraduationCap, Milestone, Trophy, Calendar, Briefcase, Filter } from "lucide-react";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 const TYPE_ICONS = {
   Education: GraduationCap,
@@ -12,6 +13,7 @@ const TYPE_ICONS = {
 
 export function Timeline() {
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const spotlight = useSpotlight();
 
   const filterOptions = ["All", "Education", "Milestone", "Hackathons"];
 
@@ -30,12 +32,17 @@ export function Timeline() {
         />
 
         {/* Filter Pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-8)" }}>
+        <div className="reveal-on-scroll" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-8)" }}>
           {filterOptions.map((opt) => (
             <button
               key={opt}
               onClick={() => setSelectedFilter(opt)}
               className={`skill-category-pill ${selectedFilter === opt ? "active" : ""}`}
+              style={{
+                transform: selectedFilter === opt ? "translateY(-1px)" : "none",
+                boxShadow: selectedFilter === opt ? "0 0 10px var(--accent-glow)" : "none",
+                transition: "all var(--transition-fast)"
+              }}
             >
               {opt}
             </button>
@@ -49,9 +56,24 @@ export function Timeline() {
           {filteredTimeline.map((item, idx) => {
             const Icon = TYPE_ICONS[item.category] || Milestone;
             return (
-              <div key={idx} className="timeline-item">
-                <div className="timeline-dot" />
-                <div className="card" style={{ padding: "var(--space-5)" }}>
+              <div key={idx} className={`timeline-item reveal-on-scroll stagger-${(idx % 4) + 1}`}>
+                <div
+                  className="timeline-dot"
+                  style={{
+                    boxShadow: "0 0 14px var(--accent)",
+                    transition: "transform var(--transition-fast)"
+                  }}
+                />
+                <div
+                  className="card card-spotlight"
+                  {...spotlight}
+                  style={{
+                    padding: "var(--space-5)",
+                    transition: "transform var(--transition-fast), border-color var(--transition-fast)"
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = "translateX(4px)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = "translateX(0)")}
+                >
                   <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-2)" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <Icon size={16} color="var(--accent)" />

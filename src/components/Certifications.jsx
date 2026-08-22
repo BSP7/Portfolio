@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Award, CheckCircle2, ExternalLink, ShieldCheck, Filter } from "lucide-react";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 export function Certifications() {
   const [filterCategory, setFilterCategory] = useState("All");
+  const spotlight = useSpotlight();
 
   const categories = ["All", "Cybersecurity", "Blockchain", "Data Science", "Engineering"];
 
@@ -23,12 +25,17 @@ export function Certifications() {
         />
 
         {/* Category Filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-8)" }}>
+        <div className="reveal-on-scroll" style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)", marginBottom: "var(--space-8)" }}>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setFilterCategory(cat)}
               className={`skill-category-pill ${filterCategory === cat ? "active" : ""}`}
+              style={{
+                transform: filterCategory === cat ? "translateY(-1px)" : "none",
+                boxShadow: filterCategory === cat ? "0 0 10px var(--accent-glow)" : "none",
+                transition: "all var(--transition-fast)"
+              }}
             >
               {cat}
             </button>
@@ -36,9 +43,21 @@ export function Certifications() {
         </div>
 
         {/* Certifications Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "var(--space-4)" }}>
-          {filteredCerts.map((cert) => (
-            <div key={cert.id} className="card" style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: "var(--space-4)" }}>
+          {filteredCerts.map((cert, idx) => (
+            <div
+              key={cert.id}
+              className={`card card-spotlight reveal-on-scroll stagger-${(idx % 4) + 1}`}
+              {...spotlight}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-3)",
+                transition: "transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast)"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-3px)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+            >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div
                   style={{
@@ -50,12 +69,13 @@ export function Certifications() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--accent)"
+                    color: "var(--accent)",
+                    boxShadow: "0 0 8px var(--accent-glow)"
                   }}
                 >
                   <Award size={20} />
                 </div>
-                <span className="badge badge-success" style={{ fontSize: "0.6875rem" }}>
+                <span className="badge badge-success" style={{ fontSize: "0.6875rem", boxShadow: "0 0 8px rgba(16, 185, 129, 0.2)" }}>
                   <CheckCircle2 size={11} />
                   Verified
                 </span>
@@ -77,7 +97,7 @@ export function Certifications() {
                   rel="noopener noreferrer"
                   className="btn btn-secondary btn-sm"
                   style={{ width: "100%", justifyContent: "center" }}
-                  aria-label={`View ${cert.name} Credential`}
+                  aria-label={`Verify ${cert.name} Credential`}
                 >
                   <span>Verify Credential</span>
                   <ExternalLink size={13} />

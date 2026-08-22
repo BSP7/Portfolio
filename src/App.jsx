@@ -13,6 +13,10 @@ import { Footer } from "./components/Footer";
 import { CommandPalette } from "./components/CommandPalette";
 import { ToastProvider } from "./components/Toast";
 import { LoadingScreen } from "./components/LoadingScreen";
+import { BackgroundEffects } from "./components/BackgroundEffects";
+import { ParticleNetwork } from "./components/ParticleNetwork";
+import { Cursor } from "./components/Cursor";
+import { initRevealAnimations } from "./animations/scrollAnimations";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +28,15 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", "dark");
     document.documentElement.setAttribute("data-accent", "amber");
   }, []);
+
+  // Initialize scroll-driven reveal animations once loading completes
+  useEffect(() => {
+    if (isLoading) return;
+    const cleanup = initRevealAnimations();
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [isLoading]);
 
   // Global Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {
@@ -79,12 +92,21 @@ export default function App() {
           <LoadingScreen onComplete={() => setIsLoading(false)} />
         )}
 
+        {/* Global Ambient Perspective Grid & Aurora Blobs */}
+        <BackgroundEffects />
+
+        {/* Interactive Cyber Particle Constellation Canvas */}
+        <ParticleNetwork />
+
+        {/* Custom Dynamic Solar Amber Cursor */}
+        <Cursor />
+
         <Navbar
           activeSection={activeSection}
           onOpenCmd={() => setCmdOpen(true)}
         />
 
-        <main>
+        <main style={{ position: "relative", zIndex: 1 }}>
           <Hero onOpenCmd={() => setCmdOpen(true)} />
           <About />
           <Skills />

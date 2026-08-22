@@ -2,8 +2,12 @@ import { useState } from "react";
 import { Shield, Brain, Link2, GraduationCap, MapPin, Target, CheckCircle2, Award, BookOpen, Lock, Terminal, Sparkles } from "lucide-react";
 import { DATA } from "../data/portfolioData";
 import { SectionHeader } from "./SectionHeader";
+import { useSpotlight } from "../hooks/useSpotlight";
 
 export function About() {
+  const spotlight1 = useSpotlight();
+  const spotlight2 = useSpotlight();
+
   const pillars = [
     {
       icon: Shield,
@@ -51,10 +55,14 @@ export function About() {
         />
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-8)", alignItems: "start" }}>
-          {/* Main Story & Education Card */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "var(--space-6)" }}>
+          {/* Main Story & Education Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "var(--space-6)" }}>
             {/* Bio & Education Card */}
-            <div className="card" style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            <div
+              className="card card-spotlight reveal-on-scroll"
+              {...spotlight1}
+              style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}
+            >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div
                   style={{
@@ -67,6 +75,7 @@ export function About() {
                     alignItems: "center",
                     justifyContent: "center",
                     color: "var(--accent)",
+                    boxShadow: "0 0 14px var(--accent-glow)",
                     flexShrink: 0
                   }}
                 >
@@ -93,7 +102,23 @@ export function About() {
                 </span>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {coreCompetencies.map((comp) => (
-                    <span key={comp} className="badge badge-accent" style={{ fontSize: "0.75rem" }}>
+                    <span
+                      key={comp}
+                      className="badge badge-accent"
+                      style={{
+                        fontSize: "0.75rem",
+                        transition: "transform var(--transition-fast), border-color var(--transition-fast)",
+                        cursor: "default"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-2px)";
+                        e.currentTarget.style.borderColor = "var(--accent)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.borderColor = "var(--accent-border)";
+                      }}
+                    >
                       <CheckCircle2 size={11} />
                       {comp}
                     </span>
@@ -133,18 +158,26 @@ export function About() {
             </div>
 
             {/* Right Column: Core Pillars & Soft Skills */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            <div className="reveal-on-scroll stagger-2" style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
               {pillars.map((pillar) => {
                 const Icon = pillar.icon;
                 return (
                   <div
                     key={pillar.title}
-                    className="card"
+                    className="card card-spotlight"
+                    {...spotlight2}
                     style={{
                       padding: "var(--space-5)",
                       display: "flex",
                       gap: "var(--space-4)",
-                      alignItems: "flex-start"
+                      alignItems: "flex-start",
+                      transition: "transform var(--transition-fast), border-color var(--transition-fast)"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = "translateY(-3px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = "translateY(0)";
                     }}
                   >
                     <div
@@ -158,6 +191,7 @@ export function About() {
                         alignItems: "center",
                         justifyContent: "center",
                         color: "var(--accent)",
+                        boxShadow: "0 0 10px var(--accent-glow)",
                         flexShrink: 0
                       }}
                     >
@@ -176,7 +210,7 @@ export function About() {
               })}
 
               {/* Soft Skills Card */}
-              <div className="card" style={{ padding: "var(--space-5)" }}>
+              <div className="card card-spotlight" style={{ padding: "var(--space-5)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "var(--space-3)" }}>
                   <Sparkles size={16} color="var(--accent)" />
                   <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text)" }}>
@@ -185,7 +219,13 @@ export function About() {
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {softSkills.map((s) => (
-                    <span key={s} className="skill-tag-pill">
+                    <span
+                      key={s}
+                      className="skill-tag-pill"
+                      style={{ transition: "transform var(--transition-fast)" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                    >
                       {s}
                     </span>
                   ))}

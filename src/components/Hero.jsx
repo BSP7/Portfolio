@@ -1,15 +1,35 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, Copy, Check, Terminal, Shield, Sparkles, Mail, ExternalLink } from "lucide-react";
+import { ArrowRight, Copy, Check, Terminal, Shield, Sparkles, Mail, ExternalLink, Activity, Cpu, Lock, CheckCircle2 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "./Icons";
 import { DATA } from "../data/portfolioData";
 import { useToast } from "./Toast";
 import { useTypewriter } from "../hooks/useTypewriter";
+import { useSpotlight } from "../hooks/useSpotlight";
+import { useCounter } from "../hooks/useCounter";
+
+const TELEMETRY_LOGS = [
+  { time: "01:04:12", type: "INFO", text: "Network telemetry normal. Packet latency: 12ms." },
+  { time: "01:04:15", type: "AI", text: "Inference engine heuristic score: 98.4% confidence." },
+  { time: "01:04:19", type: "DEFENSE", text: "Zero-Knowledge attestation proofs synced to EVM root." },
+  { time: "01:04:24", type: "AUTH", text: "ID-Trust decentralised identifier verification complete." },
+  { time: "01:04:28", type: "THREAT", text: "Zero anomaly threats detected in active network mesh." }
+];
 
 export function Hero({ onOpenCmd }) {
   const typedRole = useTypewriter(DATA.title, 60, 2000);
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("telemetry");
+  const [logIndex, setLogIndex] = useState(0);
   const { addToast } = useToast();
+  const spotlightProps = useSpotlight();
+
+  // Cycling real-time security log ticker
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLogIndex((prev) => (prev + 1) % TELEMETRY_LOGS.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText(DATA.email);
@@ -18,15 +38,20 @@ export function Hero({ onOpenCmd }) {
     setTimeout(() => setCopied(false), 2200);
   };
 
+  const currentLog = TELEMETRY_LOGS[logIndex];
+
   return (
     <section id="hero" className="hero-wrapper">
       <div className="container">
         <div className="hero-grid">
           {/* Left Column: Intro & Calls to Action */}
-          <div className="animate-fade-up">
-            {/* Status Pill */}
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: "var(--space-4)" }}>
-              <span className="badge badge-success">
+          <div className="reveal-on-scroll">
+            {/* Status Pill with harmonic float */}
+            <div
+              className="animate-float"
+              style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: "var(--space-4)" }}
+            >
+              <span className="badge badge-success" style={{ padding: "6px 14px", fontSize: "0.8125rem", boxShadow: "0 0 16px rgba(16, 185, 129, 0.2)" }}>
                 <span className="avail-dot" />
                 Open for Security & AI Roles / Research
               </span>
@@ -58,6 +83,7 @@ export function Hero({ onOpenCmd }) {
                   width: 2,
                   height: 24,
                   backgroundColor: "var(--accent)",
+                  boxShadow: "0 0 8px var(--accent)",
                   animation: "blinkCursor 1s infinite"
                 }}
               />
@@ -69,9 +95,9 @@ export function Hero({ onOpenCmd }) {
               AI-driven threat intelligence, cryptographic identity systems, and zero-knowledge verification.
             </p>
 
-            {/* CTA Buttons */}
+            {/* CTA Buttons with hover lift and glowing shine */}
             <div className="hero-cta-group">
-              <a href="#projects" className="btn btn-primary btn-lg">
+              <a href="#projects" className="btn btn-primary btn-lg" style={{ position: "relative", overflow: "hidden" }}>
                 <span>Explore Projects & Simulators</span>
                 <ArrowRight size={16} />
               </a>
@@ -88,7 +114,7 @@ export function Hero({ onOpenCmd }) {
             </div>
 
             {/* Social Links Row */}
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-8)" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--space-3)", marginBottom: "var(--space-8)" }}>
               <a
                 href={`https://${DATA.github}`}
                 target="_blank"
@@ -119,25 +145,28 @@ export function Hero({ onOpenCmd }) {
               </a>
             </div>
 
-            {/* Key Stats Bar */}
+            {/* Key Stats Bar with Animated Counter */}
             <div className="hero-stats-row">
-              {DATA.stats.map((st) => (
-                <div key={st.label} className="stat-item">
-                  <span className="stat-value">{st.value}</span>
-                  <span className="stat-label">{st.label}</span>
-                </div>
+              {DATA.stats.map((st, i) => (
+                <HeroStat key={st.label} label={st.label} rawValue={st.value} delay={i * 100} />
               ))}
             </div>
           </div>
 
-          {/* Right Column: Interactive Terminal Preview & Live Telemetry */}
-          <div className="animate-fade-up stagger-2">
-            <div className="terminal-window">
+          {/* Right Column: Interactive Terminal Preview & Live Telemetry with 3D Spotlight */}
+          <div className="reveal-on-scroll stagger-2">
+            <div
+              className="terminal-window card-spotlight"
+              {...spotlightProps}
+              style={{
+                transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease",
+              }}
+            >
               <div className="terminal-header">
                 <div className="terminal-dots">
-                  <span className="terminal-dot" style={{ background: "#ef4444" }} />
-                  <span className="terminal-dot" style={{ background: "#f59e0b" }} />
-                  <span className="terminal-dot" style={{ background: "#10b981" }} />
+                  <span className="terminal-dot" style={{ background: "#ef4444", boxShadow: "0 0 6px rgba(239,68,68,0.4)" }} />
+                  <span className="terminal-dot" style={{ background: "#f59e0b", boxShadow: "0 0 6px rgba(245,158,11,0.4)" }} />
+                  <span className="terminal-dot" style={{ background: "#10b981", boxShadow: "0 0 6px rgba(16,185,129,0.4)" }} />
                 </div>
                 <div className="terminal-title">pavan@threat-mesh: ~/workspace</div>
                 <div style={{ display: "flex", gap: 4 }}>
@@ -158,39 +187,75 @@ export function Hero({ onOpenCmd }) {
                 </div>
               </div>
 
-              <div className="terminal-body">
+              <div className="terminal-body" style={{ position: "relative", minHeight: 280 }}>
                 {activeTab === "telemetry" ? (
                   <div>
-                    <div style={{ color: "var(--text-muted)", marginBottom: 8 }}>
-                      # System Architecture & Active Security Nodes
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ color: "var(--accent)" }}>AI Inference Engine:</span>
-                      <span style={{ color: "var(--success)" }}>● ACTIVE (v2.4.1)</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ color: "var(--accent)" }}>Zero-Knowledge Attestation:</span>
-                      <span style={{ color: "var(--success)" }}>● READY (zk-SNARK)</span>
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ color: "var(--accent)" }}>Keccak256 State Root:</span>
-                      <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem" }}>0x7f9a...c4b2</span>
+                    <div style={{ color: "var(--text-muted)", marginBottom: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                      <Activity size={14} color="var(--accent)" />
+                      <span># Active Security & Verifier Mesh Telemetry</span>
                     </div>
 
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, padding: "4px 0" }}>
+                      <span style={{ color: "var(--accent)", display: "flex", alignItems: "center", gap: 6 }}>
+                        <Cpu size={14} /> AI Inference Engine:
+                      </span>
+                      <span style={{ color: "var(--success)", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                        <span className="avail-dot" /> ACTIVE (v2.4.1)
+                      </span>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, padding: "4px 0" }}>
+                      <span style={{ color: "var(--accent)", display: "flex", alignItems: "center", gap: 6 }}>
+                        <Lock size={14} /> Zero-Knowledge Attestation:
+                      </span>
+                      <span style={{ color: "var(--success)", fontWeight: 600, display: "flex", alignItems: "center", gap: 6 }}>
+                        <span className="avail-dot" /> READY (zk-SNARK)
+                      </span>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, padding: "4px 0" }}>
+                      <span style={{ color: "var(--accent)" }}>Keccak256 State Root:</span>
+                      <span style={{ color: "var(--text-secondary)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+                        0x7f9a...c4b2
+                      </span>
+                    </div>
+
+                    {/* Dynamic Real-time Event Stream Box */}
                     <div style={{ marginBlock: "16px 8px", borderTop: "1px solid var(--border)", paddingTop: 12 }}>
-                      <div style={{ color: "var(--text-muted)", fontSize: "0.75rem", marginBottom: 4 }}>
-                        LIVE SECURITY MONITORING STREAM
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                        <span style={{ color: "var(--text-muted)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>
+                          LIVE TELEMETRY STREAM
+                        </span>
+                        <span className="badge badge-accent" style={{ fontSize: "0.6875rem", padding: "2px 6px" }}>
+                          LIVE FEED
+                        </span>
                       </div>
-                      <div style={{ background: "rgba(0,0,0,0.3)", padding: 8, borderRadius: 6, fontSize: "0.75rem" }}>
-                        <span style={{ color: "var(--success)" }}>[INFO 01:04:12]</span> Network telemetry normal. Packet latency: 12ms.
-                        <br />
-                        <span style={{ color: "var(--accent)" }}>[DEFENSE]</span> Inceptrix 2.0 & Fusion-X verified builds synced.
+
+                      <div
+                        style={{
+                          background: "rgba(0,0,0,0.45)",
+                          padding: 10,
+                          borderRadius: "var(--radius-sm)",
+                          fontSize: "0.75rem",
+                          border: "1px solid var(--border)",
+                          minHeight: 52,
+                          display: "flex",
+                          alignItems: "center",
+                          transition: "background 0.3s ease",
+                        }}
+                      >
+                        <div>
+                          <span style={{ color: "var(--success)", fontFamily: "var(--font-mono)" }}>
+                            [{currentLog.type} {currentLog.time}]
+                          </span>{" "}
+                          <span style={{ color: "var(--text)" }}>{currentLog.text}</span>
+                        </div>
                       </div>
                     </div>
 
                     <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ color: "var(--accent)" }}>$</span>
-                      <span style={{ color: "var(--text-secondary)" }}>
+                      <span style={{ color: "var(--text-secondary)", fontSize: "0.8125rem" }}>
                         try clicking below to test live simulators 👇
                       </span>
                     </div>
@@ -219,5 +284,22 @@ export function Hero({ onOpenCmd }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function HeroStat({ label, rawValue, delay }) {
+  // Extract number if applicable
+  const isNumber = !isNaN(parseFloat(rawValue));
+  const numericVal = isNumber ? parseFloat(rawValue.replace(/[^0-9.]/g, "")) : 0;
+  const suffix = rawValue.includes("+") ? "+" : "";
+  const count = useCounter(numericVal, true, 1800 + delay);
+
+  return (
+    <div className="stat-item" style={{ transition: "transform var(--transition-fast)" }}>
+      <span className="stat-value" style={{ color: "var(--accent-text)" }}>
+        {isNumber ? `${count}${suffix}` : rawValue}
+      </span>
+      <span className="stat-label">{label}</span>
+    </div>
   );
 }
