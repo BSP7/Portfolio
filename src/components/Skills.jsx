@@ -98,9 +98,9 @@ export function Skills() {
     <section id="skills" className="section">
       <div className="container">
         <SectionHeader
-          tag="Core Competencies"
+          tag="Core Competencies & Foundations"
           title="Skills & Technical Matrix"
-          description="An interactive radial distribution matrix illustrating capability weights across Cybersecurity, AI, Blockchain, and Systems Engineering."
+          description="A realistic breakdown of foundational capabilities, core concepts, and active learning across Cybersecurity, AI, Blockchain, and Software Engineering."
         />
 
         {/* Top Summary Stats Bar */}
@@ -123,7 +123,7 @@ export function Skills() {
               TOTAL CAPABILITIES
             </div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)" }}>
-              {totalSkillsCount}+ Verified
+              {totalSkillsCount} Foundations
             </div>
           </div>
           <div>
@@ -136,10 +136,10 @@ export function Skills() {
           </div>
           <div>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-              PRIMARY FOCUS
+              PROFICIENCY LEVEL
             </div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--text)" }}>
-              Security & AI / ML
+              Foundations & Basics
             </div>
           </div>
         </div>
@@ -414,7 +414,13 @@ export function Skills() {
               ) : (
                 displayedSkills.map((skill) => {
                   const levelTier =
-                    skill.level >= 90 ? "Advanced Mastery" : skill.level >= 85 ? "Proficient" : "Core Competency";
+                    skill.level >= 70
+                      ? "Core Strength"
+                      : skill.level >= 58
+                      ? "Applied Basics"
+                      : skill.level >= 50
+                      ? "Foundational"
+                      : "Core Concepts";
 
                   return (
                     <div

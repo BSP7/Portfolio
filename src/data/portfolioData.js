@@ -29,84 +29,83 @@ export const DATA = {
     {
       cat: "Security & Networking",
       icon: "Shield",
-      desc: "Network security monitoring, vulnerability assessment, SIEM log analysis, and incident response fundamentals.",
+      desc: "Foundational knowledge of network security principles, packet analysis, network scanning, and fundamental security operations.",
       items: [
-        { name: "Network Security Fundamentals", level: 92 },
-        { name: "Vulnerability Assessment", level: 88 },
-        { name: "Incident Response Fundamentals", level: 85 },
-        { name: "SIEM & Log Monitoring", level: 86 },
-        { name: "Wireshark", level: 90 },
-        { name: "Nmap", level: 88 },
-        { name: "Cryptography Fundamentals", level: 90 }
+        { name: "Network Security Fundamentals", level: 65 },
+        { name: "Cryptography Principles", level: 60 },
+        { name: "Wireshark (Packet Analysis Basics)", level: 60 },
+        { name: "Nmap (Network Scanning Basics)", level: 58 },
+        { name: "Vulnerability Assessment Basics", level: 55 },
+        { name: "Incident Response Basics", level: 52 },
+        { name: "SIEM & Log Monitoring Basics", level: 50 }
       ]
     },
     {
       cat: "Programming",
       icon: "Code2",
-      desc: "Core languages for building performant security tooling, backend APIs, and smart contracts.",
+      desc: "Core syntax, data structures, and foundational scripting for tooling, web APIs, and smart contracts.",
       items: [
-        { name: "Python", level: 94 },
-        { name: "JavaScript", level: 90 },
-        { name: "TypeScript", level: 86 },
-        { name: "Solidity", level: 88 }
+        { name: "Python (Core & Scripting Basics)", level: 65 },
+        { name: "JavaScript (ES6+ Basics)", level: 60 },
+        { name: "Solidity (Smart Contract Basics)", level: 55 },
+        { name: "TypeScript (Basics)", level: 50 }
       ]
     },
     {
       cat: "AI / Machine Learning",
       icon: "Brain",
-      desc: "Threat classification models, behavioral anomaly detection, computer vision, and NLP.",
+      desc: "Foundational understanding of machine learning workflows, computer vision, and NLP concepts.",
       items: [
-        { name: "Machine Learning", level: 90 },
-        { name: "NLP (Natural Language Processing)", level: 84 },
-        { name: "Computer Vision", level: 80 },
-        { name: "Deep Learning", level: 82 }
+        { name: "Machine Learning (Foundations)", level: 60 },
+        { name: "NLP (Text Processing Basics)", level: 55 },
+        { name: "Computer Vision (Basics)", level: 52 },
+        { name: "Deep Learning (Concepts)", level: 48 }
       ]
     },
     {
       cat: "Blockchain",
       icon: "Link2",
-      desc: "Smart contracts on Ethereum, decentralized authentication, and zero-knowledge cryptography.",
+      desc: "Foundational concepts of Ethereum, smart contract mechanisms, Web3 connectivity, and zero-knowledge cryptography.",
       items: [
-        { name: "Ethereum", level: 88 },
-        { name: "Smart Contracts", level: 90 },
-        { name: "Web3.js", level: 85 },
-        { name: "Zero-Knowledge Proofs", level: 84 }
+        { name: "Ethereum Fundamentals", level: 58 },
+        { name: "Smart Contracts (Basics)", level: 55 },
+        { name: "Web3.js (Basics)", level: 50 },
+        { name: "Zero-Knowledge Proofs (Concepts)", level: 46 }
       ]
     },
     {
       cat: "Cloud & Tools",
       icon: "Cloud",
-      desc: "Infrastructure deployment, containerization, version control, and security workflows.",
+      desc: "Core tooling for version control, basic containerization, and foundational cloud concepts.",
       items: [
-        { name: "AWS", level: 82 },
-        { name: "Docker", level: 85 },
-        { name: "Git", level: 92 },
-        { name: "GitHub", level: 92 }
+        { name: "Git & GitHub (Version Control)", level: 68 },
+        { name: "Docker (Container Basics)", level: 55 },
+        { name: "AWS (Cloud Fundamentals)", level: 50 }
       ]
     },
     {
       cat: "Data Science",
       icon: "BarChart3",
-      desc: "Data processing, predictive analytics, and statistical modeling for security telemetry.",
+      desc: "Basic data processing, exploratory analysis, and data visualization using Python libraries.",
       items: [
-        { name: "Data Analysis", level: 90 },
-        { name: "Data Visualization", level: 88 },
-        { name: "Predictive Analytics", level: 85 },
-        { name: "Pandas", level: 90 },
-        { name: "NumPy", level: 88 },
-        { name: "Matplotlib", level: 86 }
+        { name: "Data Analysis (Basics)", level: 60 },
+        { name: "Pandas (Data Wrangling Basics)", level: 58 },
+        { name: "NumPy (Array Operations Basics)", level: 56 },
+        { name: "Matplotlib (Visualization Basics)", level: 54 },
+        { name: "Predictive Analytics (Concepts)", level: 50 }
       ]
     },
     {
       cat: "Soft Skills & Professional",
       icon: "Shield",
-      desc: "Core professional strengths for engineering execution and cross-team collaboration.",
+      desc: "Core interpersonal and problem-solving capabilities supporting continuous learning and teamwork.",
       items: [
-        { name: "Attention to Detail", level: 95 },
-        { name: "Problem-Solving", level: 92 },
-        { name: "Responsiveness", level: 90 },
-        { name: "Cross-Functional Collaboration", level: 88 },
-        { name: "Time Management", level: 90 }
+        { name: "Problem Solving & Analytical Thinking", level: 75 },
+        { name: "Active Learning & Adaptability", level: 75 },
+        { name: "Attention to Detail", level: 72 },
+        { name: "Communication & Responsiveness", level: 70 },
+        { name: "Team Collaboration", level: 70 },
+        { name: "Time Management", level: 68 }
       ]
     }
   ],
