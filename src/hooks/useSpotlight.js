@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useCallback } from "react";
 
 /**
  * useSpotlight — Attaches mousemove listeners to cards to create a dynamic
@@ -7,7 +7,6 @@ import { useRef, useCallback } from "react";
  * Sets CSS variables `--mouse-x` and `--mouse-y` on the element.
  */
 export function useSpotlight() {
-  const containerRef = useRef(null);
 
   const handleMouseMove = useCallback((e) => {
     const el = e.currentTarget;

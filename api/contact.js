@@ -1,15 +1,21 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export default async function handler(req, res) {
+  // CORS preflight handling
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    return res.status(200).json({ success: true });
+  }
+
   // Accept only POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method Not Allowed' });
   }
 
   try {
-    const { name, email, message, website } = req.body;
+    const { name, email, message, website } = req.body || {};
 
     // Spam Protection: Honeypot check
     // If the hidden 'website' field contains any value, silently reject.
@@ -33,11 +39,14 @@ export default async function handler(req, res) {
       return res.status(400).json({ success: false, error: 'Validation failed: Message must be between 10 and 1000 characters.' });
     }
 
+    const apiKey = process.env.RESEND_API_KEY;
     const contactEmail = process.env.CONTACT_EMAIL;
-    if (!contactEmail) {
-      console.error('Missing CONTACT_EMAIL environment variable.');
-      return res.status(500).json({ success: false, error: 'Failed to send email' });
+    if (!apiKey || !contactEmail) {
+      console.error('Missing RESEND_API_KEY or CONTACT_EMAIL environment variable.');
+      return res.status(500).json({ success: false, error: 'Server configuration error: missing email credentials.' });
     }
+
+    const resend = new Resend(apiKey);
 
     const safeName = name.trim();
     const safeEmail = email.trim();
