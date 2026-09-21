@@ -1,8 +1,9 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
 export default defineConfig(({ mode }) => {
-  // Load environment variables (.env, .env.local) into process.env for the dev server
   const env = loadEnv(mode, process.cwd(), '');
   Object.assign(process.env, env);
 
@@ -15,6 +16,9 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use(async (req, res, next) => {
             const url = req.url ? req.url.split('?')[0] : '';
             if (url === '/api/contact') {
+              const freshEnv = loadEnv(server.config.mode || 'development', process.cwd(), '');
+              Object.assign(process.env, freshEnv);
+
               if (req.method === 'OPTIONS') {
                 res.statusCode = 200;
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -51,7 +55,8 @@ export default defineConfig(({ mode }) => {
               };
 
               try {
-                const { default: handler } = await import('./api/contact.js');
+                const handlerPath = pathToFileURL(path.resolve('./api/contact.js')).href + `?t=${Date.now()}`;
+                const { default: handler } = await import(handlerPath);
                 await handler(req, res);
               } catch (err) {
                 console.error('[API Dev Error]:', err);
