@@ -97,7 +97,7 @@ export function Hero({ onOpenCmd }) {
 
             {/* CTA Buttons with hover lift and glowing shine */}
             <div className="hero-cta-group">
-              <a href="#projects" className="btn btn-primary btn-lg" style={{ position: "relative", overflow: "hidden" }}>
+              <a href="/#projects" className="btn btn-primary btn-lg" style={{ position: "relative", overflow: "hidden" }}>
                 <span>Explore Projects & Simulators</span>
                 <ArrowRight size={16} />
               </a>

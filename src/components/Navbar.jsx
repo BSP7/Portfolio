@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { Command, Menu, X, Shield } from "lucide-react";
-import { DATA } from "../data/portfolioData";
 
 const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Hackathons", href: "#hackathons" },
-  { label: "Certifications", href: "#certs" },
-  { label: "Timeline", href: "#timeline" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Skills", href: "/#skills" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Hackathons", href: "/#hackathons" },
+  { label: "Certifications", href: "/#certs" },
+  { label: "Timeline", href: "/#timeline" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar({ activeSection, onOpenCmd }) {
@@ -40,22 +39,25 @@ export function Navbar({ activeSection, onOpenCmd }) {
       <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
         <div className="nav-container">
           {/* Logo */}
-          <a href="#hero" className="nav-logo" aria-label="Pavan Kumar Home">
+          <a href="/#hero" className="nav-logo" aria-label="Pavan Kumar Home">
             <Shield size={20} color="var(--accent)" />
             <span>PAVAN<span className="nav-logo-accent">.DEV</span></span>
           </a>
 
           {/* Desktop Links */}
           <nav className="nav-links-desktop" aria-label="Main Navigation">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`nav-link ${activeSection === link.href.substring(1) ? "active" : ""}`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const sectionId = link.href.replace(/^\/?#/, "");
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`nav-link ${activeSection === sectionId ? "active" : ""}`}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Right Actions */}
@@ -86,17 +88,20 @@ export function Navbar({ activeSection, onOpenCmd }) {
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
           <div className="nav-mobile-drawer">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`nav-link ${activeSection === link.href.substring(1) ? "active" : ""}`}
-                style={{ padding: "12px 14px", fontSize: "1rem", borderRadius: "var(--radius-sm)" }}
-              >
-                {link.label}
-              </a>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const sectionId = link.href.replace(/^\/?#/, "");
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`nav-link ${activeSection === sectionId ? "active" : ""}`}
+                  style={{ padding: "12px 14px", fontSize: "1rem", borderRadius: "var(--radius-sm)" }}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </div>
         )}
       </header>

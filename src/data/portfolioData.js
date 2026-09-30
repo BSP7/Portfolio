@@ -12,7 +12,7 @@ export const DATA = {
   email: "bs.pavankumar2005@gmail.com",
   phone: "9035661991",
   github: "github.com/BSP7",
-  linkedin: "linkedin.com/in/b-s-pavan-kumar20051407/",
+  linkedin: "www.linkedin.com/in/b-s-pavan-kumar20051407/",
   stats: [
     { label: "CGPA", value: "7.60" },
     { label: "Projects Completed", value: "10+" },

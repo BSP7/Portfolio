@@ -119,6 +119,26 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Quick Links Navigation */}
+        <nav
+          aria-label="Footer Navigation"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "var(--space-4)",
+            marginBottom: "var(--space-6)",
+            fontSize: "0.875rem"
+          }}
+        >
+          <a href="/#about" className="nav-link" style={{ padding: "4px 8px" }}>About</a>
+          <a href="/#skills" className="nav-link" style={{ padding: "4px 8px" }}>Skills</a>
+          <a href="/#projects" className="nav-link" style={{ padding: "4px 8px" }}>Projects</a>
+          <a href="/#hackathons" className="nav-link" style={{ padding: "4px 8px" }}>Hackathons</a>
+          <a href="/#certs" className="nav-link" style={{ padding: "4px 8px" }}>Certifications</a>
+          <a href="/#timeline" className="nav-link" style={{ padding: "4px 8px" }}>Timeline</a>
+          <a href="/#contact" className="nav-link" style={{ padding: "4px 8px" }}>Contact</a>
+        </nav>
+
         {/* Bottom Credits */}
         <div
           style={{
