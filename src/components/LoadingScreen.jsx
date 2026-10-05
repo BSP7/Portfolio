@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Shield, CheckCircle2, Sparkles, ArrowRight, Lock, Terminal } from "lucide-react";
 import { DATA } from "../data/portfolioData";
 
 export function LoadingScreen({ onComplete }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState("loading"); // 'loading' | 'welcome' | 'exit'
-  const [statusText, setStatusText] = useState("Initializing security modules & state...");
 
   // Time of day greeting
   const getTimeGreeting = () => {
@@ -33,18 +32,21 @@ export function LoadingScreen({ onComplete }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Update status messages & transition to welcome greeting
+  // Derived status text based on progress
+  const statusText =
+    progress < 25
+      ? "[01/04] Initializing secure systems environment..."
+      : progress < 55
+      ? "[02/04] Loading AI threat intelligence models..."
+      : progress < 85
+      ? "[03/04] Preparing cryptographic identity & ZK proofs..."
+      : progress < 100
+      ? "[04/04] Finalizing interactive project sandboxes..."
+      : "Initialization Complete";
+
+  // Transition to welcome greeting once progress reaches 100%
   useEffect(() => {
-    if (progress < 25) {
-      setStatusText("[01/04] Initializing secure systems environment...");
-    } else if (progress < 55) {
-      setStatusText("[02/04] Loading AI threat intelligence models...");
-    } else if (progress < 85) {
-      setStatusText("[03/04] Preparing cryptographic identity & ZK proofs...");
-    } else if (progress < 100) {
-      setStatusText("[04/04] Finalizing interactive project sandboxes...");
-    } else if (progress >= 100 && phase === "loading") {
-      setStatusText("Initialization Complete");
+    if (progress >= 100 && phase === "loading") {
       const welcomeTimer = setTimeout(() => {
         setPhase("welcome");
       }, 400);
@@ -52,7 +54,28 @@ export function LoadingScreen({ onComplete }) {
     }
   }, [progress, phase]);
 
-  // Auto transition from welcome greeting to main page after 1.8 seconds
+  const hasProceeded = useRef(false);
+  const exitTimerRef = useRef(null);
+
+  const handleProceed = useCallback(() => {
+    if (hasProceeded.current) return;
+    hasProceeded.current = true;
+    setPhase("exit");
+    exitTimerRef.current = setTimeout(() => {
+      onComplete();
+    }, 600);
+  }, [onComplete]);
+
+  // Clean up exit timeout if component unmounts
+  useEffect(() => {
+    return () => {
+      if (exitTimerRef.current) {
+        clearTimeout(exitTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Auto transition from welcome greeting to main page after 2 seconds
   useEffect(() => {
     if (phase === "welcome") {
       const exitTimer = setTimeout(() => {
@@ -60,14 +83,7 @@ export function LoadingScreen({ onComplete }) {
       }, 2000);
       return () => clearTimeout(exitTimer);
     }
-  }, [phase]);
-
-  const handleProceed = () => {
-    setPhase("exit");
-    setTimeout(() => {
-      onComplete();
-    }, 600);
-  };
+  }, [phase, handleProceed]);
 
   return (
     <div
@@ -128,7 +144,8 @@ export function LoadingScreen({ onComplete }) {
             </div>
 
             {/* Monogram Name */}
-            <h1
+            <div
+              className="loading-logo-title"
               style={{
                 fontFamily: "var(--font-heading)",
                 fontSize: "1.75rem",
@@ -141,7 +158,7 @@ export function LoadingScreen({ onComplete }) {
               }}
             >
               {DATA.name}
-            </h1>
+            </div>
 
             <div
               style={{
@@ -243,7 +260,8 @@ export function LoadingScreen({ onComplete }) {
               {getTimeGreeting()}, Welcome!
             </div>
 
-            <h2
+            <div
+              className="loading-welcome-title"
               style={{
                 fontFamily: "var(--font-heading)",
                 fontSize: "clamp(1.75rem, 4vw, 2.25rem)",
@@ -255,7 +273,7 @@ export function LoadingScreen({ onComplete }) {
               }}
             >
               Welcome to <span style={{ color: "var(--accent-text)" }}>{DATA.name}</span>'s Workspace
-            </h2>
+            </div>
 
             <p
               style={{

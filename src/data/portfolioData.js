@@ -7,7 +7,7 @@ export const DATA = {
     "Secure Systems Architect"
   ],
   tagline: "Building secure, intelligent, and decentralized systems through Cybersecurity, Artificial Intelligence, and Blockchain technologies.",
-  bio: "I am a Bachelor of Technology in Computer Science student at Garden City University (CGPA 7.60/10.0), specializing in Cybersecurity, AI/ML, and Blockchain. I have practical experience in threat detection, vulnerability assessment, incident response, network security monitoring, machine learning, cryptography, secure system design, and blockchain authentication. I focus on engineering resilient systems that are secure by design, mathematically verifiable, and built for real-world impact.",
+  bio: "I am a Computer Science undergraduate at Garden City University (CGPA 7.60/10.0). My focus is on Cybersecurity, Machine Learning, and Blockchain. I build practical tools for threat detection, network security, and cryptographic identity. My goal is to engineer resilient systems that are secure by design, transparent, and built for real-world impact.",
   location: "Bengaluru, Karnataka, India",
   email: "bs.pavankumar2005@gmail.com",
   phone: "9035661991",
@@ -117,7 +117,7 @@ export const DATA = {
       period: "Mar 2026 – Present",
       type: "Personal Project",
       domains: "Cybersecurity, AI, Threat Detection, Machine Learning",
-      desc: "An AI-driven platform for real-time threat detection and incident response. Implemented machine learning to identify suspicious network and user activity. Features a secure monitoring architecture with access logging, automated alerting, and parallelized backend processing that reduced security-event detection latency by approximately 30%.",
+      desc: "An AI-driven platform for real-time threat detection and incident response. It uses machine learning to identify suspicious network traffic and unauthorized activity. The platform features secure access logging, automated alerting, and parallel backend processing that reduced detection latency by approximately 30%.",
       architecture: "Python / Machine Learning inference pipeline with parallelized event queue, real-time heuristic anomaly detection, and automated threat triage alerts.",
       highlights: [
         "Reduced security-event detection latency by ~30% through optimized parallelization",
@@ -143,7 +143,7 @@ export const DATA = {
       period: "Feb 2026",
       type: "Hackathon Project",
       domains: "Ethereum, Smart Contracts, Cryptography, Decentralized Identity",
-      desc: "A blockchain-based identity authentication system built on Ethereum. Generates unique cryptographic hash keys for protecting sensitive identity data while preventing data leakage. Implements decentralized verification mechanisms to improve transparency and eliminate single points of failure.",
+      desc: "A blockchain identity authentication system built on Ethereum. It generates unique cryptographic hash keys using Keccak-256 to protect sensitive identity data without data leakage. The system uses decentralized verification to eliminate single points of failure.",
       architecture: "Ethereum smart contracts, Keccak-256 cryptographic identity hashing, and decentralized verification mechanisms ensuring zero leakage of sensitive identity attributes.",
       highlights: [
         "Cryptographic hash-key generation for protecting sensitive identity data",
@@ -163,7 +163,7 @@ export const DATA = {
       period: "Apr 2026",
       type: "Hackathon Project — FUSION-X Hackathon, Presidency University",
       domains: "Blockchain, Smart Contracts, Authentication Systems, Zero-Knowledge Proofs",
-      desc: "A decentralized KYC verification platform developed during a 36-hour hackathon at Presidency University. Implements Zero-Knowledge Proofs to enable identity verification without exposing sensitive user information. Engineered secure authentication workflows focused on privacy and presented the live solution to the FUSION-X Hackathon judging panel.",
+      desc: "A decentralized KYC verification platform built during a 36-hour hackathon at Presidency University. It implements Zero-Knowledge Proofs (zk-SNARKs) to verify user identity credentials without exposing private personal information. The working prototype was successfully presented live to the FUSION-X judging panel.",
       architecture: "36-hour hackathon prototype combining zk-SNARK constraint proofs, Ethereum smart contracts, and privacy-preserving credential attestations.",
       highlights: [
         "Developed during a 36-hour hackathon at Presidency University (FUSION-X)",

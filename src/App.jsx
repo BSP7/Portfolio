@@ -38,6 +38,21 @@ export default function App() {
     };
   }, [isLoading]);
 
+  // Smoothly scroll to target section if URL contains a hash upon initial load
+  useEffect(() => {
+    if (isLoading) return;
+    if (window.location.hash) {
+      const targetId = window.location.hash.replace(/^#/, "");
+      const el = document.getElementById(targetId);
+      if (el) {
+        const timer = setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isLoading]);
+
   // Global Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {
     const handleKeyDown = (e) => {

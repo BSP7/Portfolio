@@ -91,13 +91,21 @@ export function Hero({ onOpenCmd }) {
 
             {/* Compelling Value Proposition */}
             <p className="hero-lead">
-              Computer Science undergraduate at <strong>Garden City University</strong> specializing in 
-              AI-driven threat intelligence, cryptographic identity systems, and zero-knowledge verification.
+              I am a Computer Science student at <strong>Garden City University</strong>. I build intelligent security tools, real-time threat detection systems, and privacy-focused blockchain applications.
             </p>
 
             {/* CTA Buttons with hover lift and glowing shine */}
             <div className="hero-cta-group">
-              <a href="/#projects" className="btn btn-primary btn-lg" style={{ position: "relative", overflow: "hidden" }}>
+              <a
+                href="#projects"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+                  window.history.pushState(null, "", "#projects");
+                }}
+                className="btn btn-primary btn-lg"
+                style={{ position: "relative", overflow: "hidden" }}
+              >
                 <span>Explore Projects & Simulators</span>
                 <ArrowRight size={16} />
               </a>

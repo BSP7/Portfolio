@@ -27,6 +27,16 @@ export function Footer() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    const id = href.replace(/^#/, "");
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", href);
+    }
+  };
+
   return (
     <footer
       style={{
@@ -130,13 +140,13 @@ export function Footer() {
             fontSize: "0.875rem"
           }}
         >
-          <a href="/#about" className="nav-link" style={{ padding: "4px 8px" }}>About</a>
-          <a href="/#skills" className="nav-link" style={{ padding: "4px 8px" }}>Skills</a>
-          <a href="/#projects" className="nav-link" style={{ padding: "4px 8px" }}>Projects</a>
-          <a href="/#hackathons" className="nav-link" style={{ padding: "4px 8px" }}>Hackathons</a>
-          <a href="/#certs" className="nav-link" style={{ padding: "4px 8px" }}>Certifications</a>
-          <a href="/#timeline" className="nav-link" style={{ padding: "4px 8px" }}>Timeline</a>
-          <a href="/#contact" className="nav-link" style={{ padding: "4px 8px" }}>Contact</a>
+          <a href="#about" onClick={(e) => handleNavClick(e, "#about")} className="nav-link" style={{ padding: "4px 8px" }}>About</a>
+          <a href="#skills" onClick={(e) => handleNavClick(e, "#skills")} className="nav-link" style={{ padding: "4px 8px" }}>Skills</a>
+          <a href="#projects" onClick={(e) => handleNavClick(e, "#projects")} className="nav-link" style={{ padding: "4px 8px" }}>Projects</a>
+          <a href="#hackathons" onClick={(e) => handleNavClick(e, "#hackathons")} className="nav-link" style={{ padding: "4px 8px" }}>Hackathons</a>
+          <a href="#certs" onClick={(e) => handleNavClick(e, "#certs")} className="nav-link" style={{ padding: "4px 8px" }}>Certifications</a>
+          <a href="#timeline" onClick={(e) => handleNavClick(e, "#timeline")} className="nav-link" style={{ padding: "4px 8px" }}>Timeline</a>
+          <a href="#contact" onClick={(e) => handleNavClick(e, "#contact")} className="nav-link" style={{ padding: "4px 8px" }}>Contact</a>
         </nav>
 
         {/* Bottom Credits */}

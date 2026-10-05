@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { Command, Menu, X, Shield } from "lucide-react";
 
 const NAV_LINKS = [
-  { label: "About", href: "/#about" },
-  { label: "Skills", href: "/#skills" },
-  { label: "Projects", href: "/#projects" },
-  { label: "Hackathons", href: "/#hackathons" },
-  { label: "Certifications", href: "/#certs" },
-  { label: "Timeline", href: "/#timeline" },
-  { label: "Contact", href: "/#contact" },
+  { label: "About", href: "#about" },
+  { label: "Skills", href: "#skills" },
+  { label: "Projects", href: "#projects" },
+  { label: "Hackathons", href: "#hackathons" },
+  { label: "Certifications", href: "#certs" },
+  { label: "Timeline", href: "#timeline" },
+  { label: "Contact", href: "#contact" },
 ];
 
 export function Navbar({ activeSection, onOpenCmd }) {
@@ -34,12 +34,27 @@ export function Navbar({ activeSection, onOpenCmd }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    const id = href.replace(/^#/, "");
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+      window.history.pushState(null, "", href);
+    }
+  };
+
   return (
     <>
       <header className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
         <div className="nav-container">
           {/* Logo */}
-          <a href="/#hero" className="nav-logo" aria-label="Pavan Kumar Home">
+          <a
+            href="#hero"
+            onClick={(e) => handleNavClick(e, "#hero")}
+            className="nav-logo"
+            aria-label="Pavan Kumar Home"
+          >
             <Shield size={20} color="var(--accent)" />
             <span>PAVAN<span className="nav-logo-accent">.DEV</span></span>
           </a>
@@ -47,11 +62,12 @@ export function Navbar({ activeSection, onOpenCmd }) {
           {/* Desktop Links */}
           <nav className="nav-links-desktop" aria-label="Main Navigation">
             {NAV_LINKS.map((link) => {
-              const sectionId = link.href.replace(/^\/?#/, "");
+              const sectionId = link.href.replace(/^#/, "");
               return (
                 <a
                   key={link.href}
                   href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
                   className={`nav-link ${activeSection === sectionId ? "active" : ""}`}
                 >
                   {link.label}
@@ -89,12 +105,15 @@ export function Navbar({ activeSection, onOpenCmd }) {
         {mobileMenuOpen && (
           <div className="nav-mobile-drawer">
             {NAV_LINKS.map((link) => {
-              const sectionId = link.href.replace(/^\/?#/, "");
+              const sectionId = link.href.replace(/^#/, "");
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    handleNavClick(e, link.href);
+                    setMobileMenuOpen(false);
+                  }}
                   className={`nav-link ${activeSection === sectionId ? "active" : ""}`}
                   style={{ padding: "12px 14px", fontSize: "1rem", borderRadius: "var(--radius-sm)" }}
                 >

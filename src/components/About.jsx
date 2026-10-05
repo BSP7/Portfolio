@@ -198,9 +198,9 @@ export function About() {
                       <Icon size={20} />
                     </div>
                     <div>
-                      <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
+                      <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: 4 }}>
                         {pillar.title}
-                      </h4>
+                      </h3>
                       <p style={{ fontSize: "0.875rem", color: "var(--text-secondary)", lineHeight: 1.6 }}>
                         {pillar.desc}
                       </p>
@@ -213,9 +213,9 @@ export function About() {
               <div className="card card-spotlight" style={{ padding: "var(--space-5)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "var(--space-3)" }}>
                   <Sparkles size={16} color="var(--accent)" />
-                  <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text)" }}>
+                  <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text)" }}>
                     Professional & Soft Skills
-                  </h4>
+                  </h3>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {softSkills.map((s) => (

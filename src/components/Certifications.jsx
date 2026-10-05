@@ -82,9 +82,9 @@ export function Certifications() {
               </div>
 
               <div>
-                <h4 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.4, marginBottom: 4 }}>
+                <h3 style={{ fontSize: "0.9375rem", fontWeight: 700, color: "var(--text)", lineHeight: 1.4, marginBottom: 4 }}>
                   {cert.name}
-                </h4>
+                </h3>
                 <div style={{ fontSize: "0.8125rem", color: "var(--text-muted)" }}>
                   {cert.org} · <span style={{ fontFamily: "var(--font-mono)" }}>{cert.year}</span>
                 </div>
